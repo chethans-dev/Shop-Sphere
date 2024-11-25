@@ -23,4 +23,5 @@ app.use("/api/v1/products", products);
 app.use("/api/v1/users", users);
 app.use(globalErrorHandler);
 
+
 export default app;
