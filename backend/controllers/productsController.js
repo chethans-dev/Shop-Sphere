@@ -24,7 +24,7 @@ export const getAllProducts = catchAsyncErrors(async (req, res) => {
     .filter()
     .paginate();
   const products = await apiFeature.query;
-  return sendCreatedResponse(
+  return sendSuccessResponse(
     "Products fetched successfully",
     { products, totalProducts },
     res
