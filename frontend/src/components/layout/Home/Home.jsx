@@ -6,14 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchAllProducts } from "../../../store/actions/productActions";
 import Loader from "../Loader/Loader";
+import toast from "react-hot-toast";
 
 const Home = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.product);
 
   useEffect(() => {
+    if (error)
+      return toast.error("Some error occured", { position: "top-right" });
     dispatch(fetchAllProducts());
-  }, [dispatch]);
+  }, [dispatch, error]);
   return (
     <div className="bg-white">
       <MetaData title="Shop Sphere" />
