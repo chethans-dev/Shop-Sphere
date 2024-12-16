@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import ReactStars from "react-rating-stars-component";
-import { fetchProductDetails } from "../../../store/actions/productActions";
+import { fetchProductDetails } from "../../store/actions/productActions";
 import DetailsLoader from "../Loader/DetailsLoader";
 import Testimonials from "./Testimonials";
+import { clearErrors } from "../../store/reducers/productSlice";
+import MetaData from "../layout/MetaData";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -23,8 +25,10 @@ const ProductDetails = () => {
   };
 
   useEffect(() => {
-    if (error)
-      return toast.error("Some error occured", { position: "top-right" });
+    if (error) {
+      toast.error("Some error occured", { position: "top-right" });
+      return dispatch(clearErrors());
+    }
     dispatch(fetchProductDetails(id));
   }, [dispatch, id, error]);
 
@@ -42,6 +46,7 @@ const ProductDetails = () => {
     );
   return (
     <section className="py-8 m-10 rounded-md bg-white md:py-16 dark:bg-gray-900 antialiased">
+      <MetaData title={product?.name} />
       <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0">
         <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
           <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">

@@ -4,7 +4,9 @@ import Root from "./pages/Root";
 // import Products from "./pages/Products";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./components/layout/Home/Home";
-import ProductDetails from "./components/layout/Products/ProductDetails";
+import ProductsPage from "./pages/ProductsPage";
+import LoginPage from "./pages/LoginPage";
+import ProductDetails from "./components/Products/ProductDetails";
 
 const router = createBrowserRouter([
   {
@@ -13,8 +15,9 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      //   { path: "products", element: <Products /> },
+      { path: "products", element: <ProductsPage /> },
       { path: "product/:id", element: <ProductDetails /> },
+      { path: "login", element: <LoginPage /> },
     ],
   },
 ]);

@@ -1,20 +1,23 @@
 import { motion } from "framer-motion";
 import "./Home.css";
-import ProductCard from "../Products/ProductCard";
+import ProductCard from "../../Products/ProductCard";
 import MetaData from "../MetaData";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchAllProducts } from "../../../store/actions/productActions";
-import Loader from "../Loader/Loader";
+import Loader from "../../Loader/Loader";
 import toast from "react-hot-toast";
+import { clearErrors } from "../../../store/reducers/productSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.product);
 
   useEffect(() => {
-    if (error)
-      return toast.error("Some error occured", { position: "top-right" });
+    if (error) {
+      toast.error("Some error occured", { position: "top-right" });
+      dispatch(clearErrors());
+    }
     dispatch(fetchAllProducts());
   }, [dispatch, error]);
   return (

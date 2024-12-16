@@ -71,7 +71,7 @@ export default function Loader() {
         <Button
           disabled
           tabIndex={-1}
-          className="h-8 w-20 bg-gray-300 shadow-none hover:shadow-none"
+          className="h-8 w-full bg-gray-300 shadow-none hover:shadow-none"
         >
           &nbsp;
         </Button>

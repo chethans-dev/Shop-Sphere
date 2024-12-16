@@ -6,7 +6,9 @@ export const fetchAllProducts = createAsyncThunk(
   "product/fetchAllProducts",
   async (queryParams, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/api/v1/products`);
+      const { data } = await axios.get(`/api/v1/products`, {
+        params: queryParams,
+      });
       return data; // This will be action.payload
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -43,6 +45,18 @@ export const fetchProductDetails = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(`/api/v1/products/${id}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const fetchProductCategories = createAsyncThunk(
+  "product/fetchProductCategories",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/products/categories`);
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);

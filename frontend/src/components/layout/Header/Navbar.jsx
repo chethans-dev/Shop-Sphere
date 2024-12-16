@@ -1,7 +1,7 @@
 import logo from "../../../assets/images/logo.png";
 import {
   Navbar,
-  MobileNav,
+  // MobileNav,
   Typography,
   Button,
   Menu,
@@ -10,6 +10,7 @@ import {
   MenuItem,
   Avatar,
   IconButton,
+  Collapse,
 } from "@material-tailwind/react";
 import {
   UserCircleIcon,
@@ -20,11 +21,11 @@ import {
   PowerIcon,
   Bars2Icon,
   HomeIcon,
-  InformationCircleIcon,
-  IdentificationIcon,
+  // InformationCircleIcon,
+  // IdentificationIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import React from "react";
 import { motion } from "framer-motion";
 
@@ -125,16 +126,16 @@ const navListItems = [
     icon: RectangleStackIcon,
     path: "/products",
   },
-  {
-    label: "Contact",
-    icon: IdentificationIcon,
-    path: "/contact",
-  },
-  {
-    label: "About",
-    icon: InformationCircleIcon,
-    path: "/about",
-  },
+  // {
+  //   label: "Contact",
+  //   icon: IdentificationIcon,
+  //   path: "/contact",
+  // },
+  // {
+  //   label: "About",
+  //   icon: InformationCircleIcon,
+  //   path: "/about",
+  // },
 ];
 
 function NavList() {
@@ -162,6 +163,7 @@ function NavList() {
 
 export default function ComplexNavbar() {
   const [isNavOpen, setIsNavOpen] = React.useState(false);
+  const [keyword, setKeyword] = React.useState("");
 
   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
 
@@ -171,6 +173,19 @@ export default function ComplexNavbar() {
       () => window.innerWidth >= 960 && setIsNavOpen(false)
     );
   }, []);
+
+  const navigate = useNavigate();
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    if (keyword.trim()) {
+      navigate(`/products?keyword=${keyword}`);
+    } else {
+      navigate("/products");
+    }
+  };
+
+  const location = useLocation();
 
   return (
     <motion.div
@@ -197,20 +212,49 @@ export default function ComplexNavbar() {
             <Bars2Icon className="h-6 w-6" />
           </IconButton>
           <Link to="/login">
-            <Button size="sm" variant="text">
+            <Button size="sm" variant="text" className="text-blue-gray-500">
               <span>Log In</span>
             </Button>
           </Link>
           <Link to="/signup">
-            <Button size="sm" variant="text">
+            <Button size="sm" variant="text" className="text-blue-gray-500">
               <span>Sign Up</span>
             </Button>
           </Link>
+          {!location.pathname.includes("/products") && (
+            <div className="">
+              <div className="relative">
+                <form onSubmit={handleSearchSubmit}>
+                  <input
+                    className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                    placeholder="Laptops, Aipods ..."
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                  />
+                  <button className="bg-black absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-4 h-4 mr-2"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Search
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
           <ProfileMenu />
         </div>
-        <MobileNav open={isNavOpen} className="overflow-scroll">
+        <Collapse open={isNavOpen} className="overflow-scroll">
           <NavList />
-        </MobileNav>
+        </Collapse>
       </Navbar>
     </motion.div>
   );

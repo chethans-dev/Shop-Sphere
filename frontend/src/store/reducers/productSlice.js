@@ -4,12 +4,14 @@ import {
   deleteProduct,
   fetchAllProducts,
   fetchProductDetails,
+  fetchProductCategories
 } from "../actions/productActions";
 
 const initialState = {
   products: [],
   product: {},
   reviews: [],
+  categories: [],
   loading: false,
   error: null,
   isDeleted: false,
@@ -42,7 +44,6 @@ const productSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
-        console.log(action)
         state.loading = false;
         state.products = action.payload.data.products;
         state.productsCount = action.payload.data.totalProducts;
@@ -93,6 +94,20 @@ const productSlice = createSlice({
         state.product = action.payload.data;
       })
       .addCase(fetchProductDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle categories
+    builder
+      .addCase(fetchProductCategories.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProductCategories.fulfilled, (state, action) => {
+        state.loading = false;
+        state.categories = action.payload.data;
+      })
+      .addCase(fetchProductCategories.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
