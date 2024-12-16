@@ -18,12 +18,13 @@ export const createProduct = catchAsyncErrors(async (req, res) => {
 
 // Get all products - All
 export const getAllProducts = catchAsyncErrors(async (req, res) => {
-  const totalProducts = await Product.countDocuments();
+  // const totalProducts = await Product.countDocuments();
   const apiFeature = new APIFeatures(Product.find(), req.query)
     .search()
     .filter()
     .paginate();
   const products = await apiFeature.query;
+  const totalProducts = products.length;
   return sendSuccessResponse(
     "Products fetched successfully",
     { products, totalProducts },
@@ -152,6 +153,16 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
   return sendSuccessResponse(
     "Deleted Review successfully",
     { reviews: product.reviews },
+    res
+  );
+});
+
+// Get all categories
+export const getCategories = catchAsyncErrors(async (req, res) => {
+  const categories = await Product.distinct("category");
+  return sendSuccessResponse(
+    "Categories fetched successfully",
+    categories,
     res
   );
 });

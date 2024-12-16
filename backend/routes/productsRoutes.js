@@ -6,6 +6,7 @@ import {
   deleteReview,
   getAllProducts,
   getAllReviews,
+  getCategories,
   getProductDetails,
   updateProduct,
 } from "../controllers/productsController.js";
@@ -17,6 +18,8 @@ router
   .route("/")
   .get(getAllProducts)
   .post(isAuthUser, restrictTo("admin"), createProduct);
+
+router.route("/categories").get(getCategories)
 
 router.route("/reviews").get(getAllReviews).delete(isAuthUser, deleteReview);
 router.route("/review").put(isAuthUser, createProductReview);

@@ -8,13 +8,30 @@ class APIFeatures {
   search() {
     const keyword = this.queryString?.keyword
       ? {
-          name: {
-            $regex: this.queryString?.keyword,
-            $options: "i",
-          },
+          $or: [
+            {
+              name: {
+                $regex: this.queryString?.keyword,
+                $options: "i",
+              },
+            },
+            {
+              category: {
+                $regex: this.queryString?.keyword,
+                $options: "i",
+              },
+            },
+            {
+              description: {
+                $regex: this.queryString?.keyword,
+                $options: "i",
+              },
+            },
+          ],
         }
       : {};
 
+    // Apply the search filter to the query
     this.query = this.query.find({ ...keyword });
     return this;
   }
