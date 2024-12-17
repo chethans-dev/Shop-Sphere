@@ -108,6 +108,9 @@ function Filters() {
   const handleClearAll = () => {
     setSelectedCategory("");
     setKeyword("");
+    setPrice([50, 30000]);
+    setRatings(0);
+    navigate("/products")
   };
 
   const handlePriceChange = (event, newValue) => {

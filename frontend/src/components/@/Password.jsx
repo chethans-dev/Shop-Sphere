@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import { EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Password = ({ showForgotPassword }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -21,12 +22,9 @@ const Password = ({ showForgotPassword }) => {
         {/* Implement this in future */}
         {showForgotPassword && (
           <div className="text-sm">
-            <a
-              href="#"
-              className="font-semibold text-indigo-600 hover:text-indigo-500"
-            >
+            <Link to="/forgot-password" className="font-semibold text-black">
               Forgot password?
-            </a>
+            </Link>
           </div>
         )}
       </div>
