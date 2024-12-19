@@ -65,7 +65,7 @@ const ProductsPage = () => {
           : products.map((product) => (
               <ProductCard product={product} key={product._id} />
             ))}
-        {products.length === 0 && <>No products found!!</>}
+        {/* {products.length === 0 && <>No products found!!</>} */}
       </div>
       <div className="bottom-0 py-4 flex justify-center items-center shadow-md">
         <ReactPaginate

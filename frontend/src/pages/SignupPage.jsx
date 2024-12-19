@@ -1,4 +1,4 @@
-import { Form, Link } from "react-router-dom";
+import { Form, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Logo from "../assets/images/logo.png";
 import Input from "../components/@/Input";
@@ -10,11 +10,11 @@ import { signupUser } from "../store/actions/userActions";
 import toast from "react-hot-toast";
 
 const SignupPage = () => {
-  const { user, error, loading, isAuthenticated } = useSelector(
+  const { error, loading, isAuthenticated } = useSelector(
     (state) => state.user
   );
   const dispatch = useDispatch();
-  console.log(error);
+  const navigate = useNavigate();
 
   // ! PENDING_
   useEffect(() => {
@@ -25,7 +25,7 @@ const SignupPage = () => {
     if (isAuthenticated) {
       navigate("/account");
     }
-  }, [error, dispatch, isAuthenticated]);
+  }, [error, dispatch, isAuthenticated, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -89,15 +89,15 @@ const SignupPage = () => {
               alt="Avatar Preview"
             />
           </div>
-          <FormButton title="Register" />
+          <FormButton
+            title={loading ? "Registering..." : "Register"}
+            disabled={loading}
+          />
         </Form>
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Already have an account?&nbsp;
-          <Link
-            to="/login"
-            className="font-medium text-indigo-600 hover:underline"
-          >
+          <Link to="/login" className="font-medium text-black hover:underline">
             Login
           </Link>
         </p>

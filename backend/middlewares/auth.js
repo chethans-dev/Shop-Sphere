@@ -4,7 +4,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import User from "../models/userModel.js";
 
 export const isAuthUser = catchAsyncErrors(async (req, res, next) => {
-  const { jwt } = req.cookies;
+  const { _t: jwt } = req.cookies;
 
   //   1. Check if token does not exist
   if (!jwt)

@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import Cookies from 'js-cookie';
 
 // Login User
 export const loginUser = createAsyncThunk(
@@ -57,7 +56,6 @@ export const logout = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       await axios.get("/api/v1/users/logout");
-      // Cookies.remove("_t");
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }

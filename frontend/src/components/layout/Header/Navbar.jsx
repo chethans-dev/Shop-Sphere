@@ -1,7 +1,6 @@
 import logo from "../../../assets/images/logo.png";
 import {
   Navbar,
-  // MobileNav,
   Typography,
   Button,
   Menu,
@@ -19,12 +18,15 @@ import {
   HomeIcon,
   RectangleStackIcon,
   Square3Stack3DIcon,
+  UserIcon,
+  UserPlusIcon,
 } from "@heroicons/react/24/solid";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/actions/userActions";
+import Cookies from "js-cookie";
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -32,10 +34,12 @@ function ProfileMenu() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
   const account = () => navigate("/account");
   const orders = () => navigate("/orders");
-  const logoutUser = () => dispatch(logout());
+  const logoutUser = () => {
+    dispatch(logout());
+    Cookies.remove("_t");
+  };
   const dashboard = () => navigate("/dashboard");
   // profile menu component
   const profileMenuItems = [
@@ -140,12 +144,28 @@ const navListItems = [
     icon: RectangleStackIcon,
     path: "/products",
   },
+  {
+    label: "Login",
+    icon: UserIcon,
+    path: "/login",
+  },
+  {
+    label: "Signup",
+    icon: UserPlusIcon,
+    path: "/signup",
+  },
 ];
 
 function NavList() {
+  const { isAuthenticated } = useSelector((state) => state.user);
+
+  const filteredNavListItems = navListItems.filter(
+    (item) =>
+      !(isAuthenticated && (item.label === "Login" || item.label === "Signup"))
+  );
   return (
     <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
-      {navListItems.map(({ label, icon, path }) => (
+      {filteredNavListItems.map(({ label, icon, path }) => (
         <Link to={path} key={label}>
           <Typography
             key={label}
@@ -166,12 +186,10 @@ function NavList() {
 }
 
 export default function ComplexNavbar() {
-  const [isNavOpen, setIsNavOpen] = React.useState(false);
-  const [keyword, setKeyword] = React.useState("");
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [keyword, setKeyword] = useState("");
 
-  const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
-
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setIsNavOpen(false)
@@ -204,52 +222,36 @@ export default function ComplexNavbar() {
           <Link to="/" className="mr-4 ml-2 cursor-pointer py-1.5 font-medium">
             <img className="h-8 w-auto" src={logo} alt="logo" />
           </Link>
+          {!location.pathname.includes("/products") && (
+            <div className="relative">
+              <form onSubmit={handleSearchSubmit}>
+                <input
+                  className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                  placeholder="Laptops, Aipods ..."
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+                <button className="bg-black absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-4 h-4 mr-2"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Search
+                </button>
+              </form>
+            </div>
+          )}
           <div className="hidden lg:block">
             <NavList />
           </div>
-          {!isAuthenticated && (
-            <>
-              <Link to="/login">
-                <Button size="sm" variant="text" className="text-blue-gray-500">
-                  <span>Log In</span>
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button size="sm" variant="text" className="text-blue-gray-500">
-                  <span>Sign Up</span>
-                </Button>
-              </Link>
-            </>
-          )}
-          {!location.pathname.includes("/products") && (
-            <div className="">
-              <div className="relative">
-                <form onSubmit={handleSearchSubmit}>
-                  <input
-                    className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                    placeholder="Laptops, Aipods ..."
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                  />
-                  <button className="bg-black absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="w-4 h-4 mr-2"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Search
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
           {isAuthenticated && <ProfileMenu />}
         </div>
         <Collapse open={isNavOpen} className="overflow-scroll">

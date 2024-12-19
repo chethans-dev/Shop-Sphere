@@ -11,7 +11,7 @@ import SignupPage from "./pages/SignupPage";
 import { useEffect } from "react";
 import { loadUser } from "./store/actions/userActions";
 import { useDispatch } from "react-redux";
-
+import { clearErrors } from "./store/reducers/userSlice";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +32,8 @@ function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(loadUser());
-  }, []);
+    dispatch(clearErrors());
+  }, [dispatch]);
   return (
     <>
       <RouterProvider router={router} />

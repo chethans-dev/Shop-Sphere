@@ -8,23 +8,25 @@ import MetaData from "../components/layout/MetaData";
 import { loginUser } from "../store/actions/userActions";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { clearErrors } from "../store/reducers/userSlice";
 
 const LoginPage = () => {
-  const { user, error, loading, isAuthenticated } = useSelector(
+  const { error, loading, isAuthenticated } = useSelector(
     (state) => state.user
   );
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (error) {
       toast.error(error, { position: "top-right" });
+      dispatch(clearErrors());
     }
-    if(isAuthenticated){
-      // navigate("/account")
+    if (isAuthenticated) {
+      navigate("/account");
     }
-  }, [dispatch, error, isAuthenticated]);
-  
+  }, [dispatch, error, isAuthenticated, navigate]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -51,10 +53,7 @@ const LoginPage = () => {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Don&apos;t have an account?&nbsp;
-          <Link
-            to="/signup"
-            className="font-medium text-indigo-600 hover:underline"
-          >
+          <Link to="/signup" className="font-medium text-black hover:underline">
             Create a new account
           </Link>
         </p>
