@@ -8,6 +8,10 @@ import ProductsPage from "./pages/ProductsPage";
 import LoginPage from "./pages/LoginPage";
 import ProductDetails from "./components/Products/ProductDetails";
 import SignupPage from "./pages/SignupPage";
+import { useEffect } from "react";
+import { loadUser } from "./store/actions/userActions";
+import { useDispatch } from "react-redux";
+
 
 const router = createBrowserRouter([
   {
@@ -25,6 +29,10 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(loadUser());
+  }, []);
   return (
     <>
       <RouterProvider router={router} />

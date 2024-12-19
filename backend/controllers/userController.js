@@ -1,4 +1,6 @@
 import crypto from "crypto";
+import { v2 as cloudinary } from "cloudinary";
+import { Readable } from "stream";
 import { sendSuccessResponse } from "../utils/responses.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../utils/catchAsync.js";
@@ -21,18 +23,66 @@ const createAndSendToken = (user, res, message) => {
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
   // 3. Store the token in cookie
-  res.cookie("jwt", token, cookieOptions);
-  return sendSuccessResponse(message, { token }, res);
+  const { _doc } = user;
+
+  res.cookie("_t", token, cookieOptions);
+  return sendSuccessResponse(message, { token, ..._doc }, res);
 };
 
 // * Signup
-export const signup = catchAsyncErrors(async (req, res) => {
+export const signup = catchAsyncErrors(async (req, res, next) => {
+  const avatar = req.files?.avatar?.data;
   const { name, email, password } = req.body;
+
+  // Check if the user already exists
+  const existingUser = await User.findOne({ email });
+
+  if (existingUser) {
+    return next(new ErrorHandler("User already exists", 400));
+  }
+
+  // If user doesn't exist, handle image upload
+  let avatarData = {};
+  if (avatar) {
+    // Convert the Buffer to a Readable stream
+    const bufferStream = new Readable();
+    bufferStream.push(avatar);
+    bufferStream.push(null);
+
+    // Upload the image directly to Cloudinary using the stream
+    const myCloud = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "avatars",
+          width: 150,
+          crop: "scale",
+          resource_type: "auto",
+        },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        }
+      );
+
+      // Pipe the buffer stream to Cloudinary
+      bufferStream.pipe(uploadStream);
+    });
+
+    // Set the avatar data from Cloudinary upload result
+    avatarData = {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    };
+  }
+
+  // Create user with the avatar information from Cloudinary if available
   const user = await User.create({
     name,
     email,
     password,
-    avatar: { public_id: "123", url: "testing" },
+    avatar: avatarData,
   });
 
   return createAndSendToken(user, res, "User created successfully");

@@ -9,52 +9,65 @@ import {
   MenuList,
   MenuItem,
   Avatar,
-  IconButton,
   Collapse,
 } from "@material-tailwind/react";
 import {
   UserCircleIcon,
   ChevronDownIcon,
-  Cog6ToothIcon,
-  InboxArrowDownIcon,
-  LifebuoyIcon,
   PowerIcon,
   Bars2Icon,
   HomeIcon,
-  // InformationCircleIcon,
-  // IdentificationIcon,
   RectangleStackIcon,
+  Square3Stack3DIcon,
 } from "@heroicons/react/24/solid";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React from "react";
 import { motion } from "framer-motion";
-
-// profile menu component
-const profileMenuItems = [
-  {
-    label: "My Profile",
-    icon: UserCircleIcon,
-  },
-  {
-    label: "Edit Profile",
-    icon: Cog6ToothIcon,
-  },
-  {
-    label: "Inbox",
-    icon: InboxArrowDownIcon,
-  },
-  {
-    label: "Help",
-    icon: LifebuoyIcon,
-  },
-  {
-    label: "Sign Out",
-    icon: PowerIcon,
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../store/actions/userActions";
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
+  const account = () => navigate("/account");
+  const orders = () => navigate("/orders");
+  const logoutUser = () => dispatch(logout());
+  const dashboard = () => navigate("/dashboard");
+  // profile menu component
+  const profileMenuItems = [
+    {
+      label: "My Profile",
+      icon: UserCircleIcon,
+      link: account,
+    },
+    {
+      label: "Orders",
+      icon: Bars2Icon,
+      link: orders,
+    },
+    {
+      label: "Sign Out",
+      icon: PowerIcon,
+      link: logoutUser,
+    },
+  ];
+
+  if (user && user?.role === "admin") {
+    const dashboardExists = profileMenuItems.some(
+      (item) => item.label === "Dashboard"
+    );
+    if (!dashboardExists) {
+      profileMenuItems.unshift({
+        label: "Dashboard",
+        icon: Square3Stack3DIcon,
+        link: dashboard,
+      });
+    }
+  }
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -69,9 +82,9 @@ function ProfileMenu() {
           <Avatar
             variant="circular"
             size="sm"
-            alt="tania andrew"
+            alt={user?.name}
             className="border border-gray-900 p-0.5"
-            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+            src={user?.avatar?.url}
           />
           <ChevronDownIcon
             strokeWidth={2.5}
@@ -82,7 +95,7 @@ function ProfileMenu() {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon }, key) => {
+        {profileMenuItems.map(({ label, icon, link }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
           return (
             <MenuItem
@@ -103,6 +116,7 @@ function ProfileMenu() {
                 variant="small"
                 className="font-normal"
                 color={isLastItem ? "red" : "inherit"}
+                onClick={link}
               >
                 {label}
               </Typography>
@@ -126,16 +140,6 @@ const navListItems = [
     icon: RectangleStackIcon,
     path: "/products",
   },
-  // {
-  //   label: "Contact",
-  //   icon: IdentificationIcon,
-  //   path: "/contact",
-  // },
-  // {
-  //   label: "About",
-  //   icon: InformationCircleIcon,
-  //   path: "/about",
-  // },
 ];
 
 function NavList() {
@@ -186,6 +190,7 @@ export default function ComplexNavbar() {
   };
 
   const location = useLocation();
+  const { isAuthenticated } = useSelector((state) => state.user);
 
   return (
     <motion.div
@@ -202,25 +207,20 @@ export default function ComplexNavbar() {
           <div className="hidden lg:block">
             <NavList />
           </div>
-          <IconButton
-            size="sm"
-            color="blue-gray"
-            variant="text"
-            onClick={toggleIsNavOpen}
-            className="ml-auto mr-2 lg:hidden"
-          >
-            <Bars2Icon className="h-6 w-6" />
-          </IconButton>
-          <Link to="/login">
-            <Button size="sm" variant="text" className="text-blue-gray-500">
-              <span>Log In</span>
-            </Button>
-          </Link>
-          <Link to="/signup">
-            <Button size="sm" variant="text" className="text-blue-gray-500">
-              <span>Sign Up</span>
-            </Button>
-          </Link>
+          {!isAuthenticated && (
+            <>
+              <Link to="/login">
+                <Button size="sm" variant="text" className="text-blue-gray-500">
+                  <span>Log In</span>
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button size="sm" variant="text" className="text-blue-gray-500">
+                  <span>Sign Up</span>
+                </Button>
+              </Link>
+            </>
+          )}
           {!location.pathname.includes("/products") && (
             <div className="">
               <div className="relative">
@@ -250,7 +250,7 @@ export default function ComplexNavbar() {
               </div>
             </div>
           )}
-          <ProfileMenu />
+          {isAuthenticated && <ProfileMenu />}
         </div>
         <Collapse open={isNavOpen} className="overflow-scroll">
           <NavList />
