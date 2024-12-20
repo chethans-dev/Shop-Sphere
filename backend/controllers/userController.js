@@ -108,7 +108,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 
 // * Logout
 export const logout = catchAsyncErrors(async (req, res, next) => {
-  res.clearCookie("jwt");
+  res.clearCookie("_t");
   res.status(200).json({ status: "success" });
 });
 

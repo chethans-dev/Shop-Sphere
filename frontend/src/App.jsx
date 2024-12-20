@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { loadUser } from "./store/actions/userActions";
 import { useDispatch } from "react-redux";
 import { clearErrors } from "./store/reducers/userSlice";
+import ProfilePage from "./pages/ProfilePage";
+import OrdersPage from "./pages/OrdersPage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +26,8 @@ const router = createBrowserRouter([
       { path: "product/:id", element: <ProductDetails /> },
       { path: "login", element: <LoginPage /> },
       { path: "signup", element: <SignupPage /> },
+      { path: "account", element: <ProfilePage /> },
+      { path: "orders", element: <OrdersPage /> },
     ],
   },
 ]);

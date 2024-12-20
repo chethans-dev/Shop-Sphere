@@ -4,50 +4,55 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Name is required"],
-    trim: true,
-    maxlength: [30, "Name cannot exceed 30 characters"],
-    minlength: [4, "Name cannot be less than 4 characters"],
-  },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-    validate: [validator.isEmail, "Please enter a valid email"],
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    select: false,
-    minLength: [8, "Password must be at least 8 characters"],
-  },
-  avatar: {
-    public_id: {
+const userSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
-      required: true,
+      required: [true, "Name is required"],
+      trim: true,
+      maxlength: [30, "Name cannot exceed 30 characters"],
+      minlength: [4, "Name cannot be less than 4 characters"],
     },
-    url: {
+    email: {
       type: String,
-      required: true,
+      required: [true, "Email is required"],
+      unique: true,
+      validate: [validator.isEmail, "Please enter a valid email"],
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      select: false,
+      minLength: [8, "Password must be at least 8 characters"],
+    },
+    avatar: {
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
+    },
+    role: {
+      type: String,
+      default: "user",
+      enum: ["user", "admin"],
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
     },
   },
-  role: {
-    type: String,
-    default: "user",
-    enum: ["user", "admin"],
-  },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 // Middleware to perform password encryption before saving to db
 userSchema.pre("save", async function (next) {

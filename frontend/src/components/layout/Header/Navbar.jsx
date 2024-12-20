@@ -10,6 +10,7 @@ import {
   Avatar,
   Collapse,
 } from "@material-tailwind/react";
+import Backdrop from '@mui/material/Backdrop';
 import {
   UserCircleIcon,
   ChevronDownIcon,
@@ -26,7 +27,6 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/actions/userActions";
-import Cookies from "js-cookie";
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -38,7 +38,6 @@ function ProfileMenu() {
   const orders = () => navigate("/orders");
   const logoutUser = () => {
     dispatch(logout());
-    Cookies.remove("_t");
   };
   const dashboard = () => navigate("/dashboard");
   // profile menu component
