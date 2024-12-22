@@ -10,7 +10,6 @@ import {
   Avatar,
   Collapse,
 } from "@material-tailwind/react";
-import Backdrop from '@mui/material/Backdrop';
 import {
   UserCircleIcon,
   ChevronDownIcon,
@@ -38,6 +37,7 @@ function ProfileMenu() {
   const orders = () => navigate("/orders");
   const logoutUser = () => {
     dispatch(logout());
+    navigate("/login");
   };
   const dashboard = () => navigate("/dashboard");
   // profile menu component

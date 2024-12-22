@@ -32,7 +32,7 @@ const createAndSendToken = (user, res, message) => {
 // * Signup
 export const signup = catchAsyncErrors(async (req, res, next) => {
   const avatar = req.files?.avatar?.data;
-  const { name, email, password } = req.body;
+  const { name, email, password, mobile } = req.body;
 
   // Check if the user already exists
   const existingUser = await User.findOne({ email });
@@ -82,6 +82,7 @@ export const signup = catchAsyncErrors(async (req, res, next) => {
     name,
     email,
     password,
+    mobile,
     avatar: avatarData,
   });
 

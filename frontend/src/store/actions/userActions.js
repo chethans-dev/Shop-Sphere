@@ -61,3 +61,15 @@ export const logout = createAsyncThunk(
     }
   }
 );
+
+export const updateUser = createAsyncThunk(
+  "user/updateUser",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put("/api/v1/users/me", payload);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);

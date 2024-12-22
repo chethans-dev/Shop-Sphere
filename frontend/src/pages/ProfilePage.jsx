@@ -5,11 +5,40 @@ import {
   Button,
   Input,
 } from "@material-tailwind/react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import MetaData from "../components/layout/MetaData";
+import { updateUser } from "../store/actions/userActions";
+import toast from "react-hot-toast";
 
 const ProfilePage = () => {
-  const { user } = useSelector((state) => state.user);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    mobile: user?.mobile || "",
+  });
+
+  useEffect(() => {
+    setFormData({
+      name: user?.name || "",
+      email: user?.email || "",
+      mobile: user?.mobile || "",
+    });
+  }, [user]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isAuthenticated) navigate("/login");
+  }, [isAuthenticated, navigate]);
   // Function to get the year
   function getYear(isoDate) {
     const date = new Date(isoDate);
@@ -35,8 +64,25 @@ const ProfilePage = () => {
     ];
     return monthNames[date.getMonth()];
   }
+
+  // Update user
+  const handleUpdateUser = (e) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.mobile) {
+      toast.error("Please fill in all required fields.", {
+        position: "top-right",
+      });
+      return;
+    }
+    dispatch(updateUser(formData));
+    toast.success("User updated succcessfully.", {
+      position: "top-right",
+    });
+  };
+
   return (
     <div className="container rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
+      <MetaData title="Account" />
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row items-center gap-6">
         {/* Avatar Section */}
@@ -71,23 +117,56 @@ const ProfilePage = () => {
         <Card className="w-full md:w-[48%] shadow-md">
           <CardBody>
             <h3 className="text-xl font-semibold mb-4">Personal Information</h3>
-            <form className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4" onSubmit={handleUpdateUser}>
               <Input
                 label="Full Name"
-                defaultValue="John Doe"
-                value={user?.name || ""}
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
               />
               <Input
                 label="Email Address"
                 type="email"
-                defaultValue="johndoe@example.com"
-                value={user?.email || ""}
+                value={formData.email}
+                onChange={handleInputChange}
+                name="email"
               />
               <Input
                 label="Phone Number"
                 type="tel"
-                defaultValue="+1234567890"
-                value={user?.mobile || ""}
+                value={formData.mobile}
+                onChange={handleInputChange}
+                name="mobile"
+              />
+              <Button type="submit" color="black">
+                Save Changes
+              </Button>
+            </form>
+          </CardBody>
+        </Card>
+
+        {/* Change password */}
+        <Card className="w-full md:w-[48%] shadow-md">
+          <CardBody>
+            <h3 className="text-xl font-semibold mb-4">Change Password</h3>
+            <form className="flex flex-col gap-4">
+              <Input
+                label="Current Password"
+                type="password"
+                name="currentPassword"
+                required
+              />
+              <Input
+                label="New Password"
+                type="password"
+                name="newPassword"
+                required
+              />
+              <Input
+                label="Confirm New Password"
+                type="password"
+                name="confirmPassword"
+                required
               />
               <Button color="black">Save Changes</Button>
             </form>

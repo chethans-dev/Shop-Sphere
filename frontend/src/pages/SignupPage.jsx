@@ -47,7 +47,7 @@ const SignupPage = () => {
   const [avatarPreview, setAvatarPreview] = useState("/images/Profile.png");
 
   return (
-    <div className="flex items-center justify-center h-auto min-h-[80vh] px-4 sm:px-6 lg:px-8 ">
+    <div className="flex items-center justify-center h-auto min-h-[90vh] px-4 sm:px-6 lg:px-8 ">
       <MetaData title="Register" />
       <div className="w-full max-w-md space-y-8 bg-white shadow-md rounded-lg p-6 sm:p-8">
         <div>
@@ -61,6 +61,7 @@ const SignupPage = () => {
           onSubmit={handleSubmit}
         >
           <Input labelName="Name" type="text" />
+          <Input labelName="Mobile number" type="tel" />
           <Input labelName="Email address" type="email" />
           <Password showForgotPassword={false} />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
