@@ -127,9 +127,12 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // 3. Create url and message
-  const resetUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/users/resetPassword/${resetToken}`;
+  // const resetUrl = `${req.protocol}://${req.get(
+  //   "host"
+  // )}/api/v1/users/resetPassword/${resetToken}`;
+
+  // ! Temp
+  const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
   const message = `You are receiving this email because you (or someone else) has requested a password reset. Please click on the following link to reset your password: \n\n${resetUrl}\n\nIf you did not request this, please ignore this email and no changes will be made.`;
 
   // 4. Send email
@@ -198,7 +201,7 @@ export const upadatePassword = catchAsyncErrors(async (req, res, next) => {
   // 1. Get the user from the collection
   const user = await User.findById(req.user.id).select("+password");
 
-  // 2. Cheeck is passwrod is correct
+  // 2. Check is passwrod is correct
   const isPasswordMatched = await user.correctPassword(
     req.body.oldPassword,
     user.password
@@ -270,4 +273,62 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
   if (!user) return next(new ErrorHandler("User not found", 404));
 
   return sendSuccessResponse("User deleted successfully", {}, res);
+});
+
+// * Update user avatar
+export const updateUserAvatar = catchAsyncErrors(async (req, res, next) => {
+  const avatar = req.files?.avatar?.data;
+
+  if (!avatar) {
+    return next(new ErrorHandler("No avatar file provided", 400));
+  }
+
+  // Fetch the currently logged-in user
+  const userId = req.user.id;
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  // Delete the old avatar from Cloudinary if it exists
+  if (user.avatar && user.avatar.public_id) {
+    await cloudinary.uploader.destroy(user.avatar.public_id);
+  }
+
+  // Convert the Buffer to a Readable stream
+  const bufferStream = new Readable();
+  bufferStream.push(avatar);
+  bufferStream.push(null);
+
+  // Upload the new avatar to Cloudinary
+  const myCloud = await new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "avatars",
+        width: 150,
+        crop: "scale",
+        resource_type: "auto",
+      },
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(result);
+      }
+    );
+
+    // Pipe the buffer stream to Cloudinary
+    bufferStream.pipe(uploadStream);
+  });
+
+  // Update the user's avatar information in MongoDB
+  user.avatar = {
+    public_id: myCloud.public_id,
+    url: myCloud.secure_url,
+  };
+
+  await user.save();
+
+  return sendSuccessResponse("Avatar updated successfully", user, res);
 });

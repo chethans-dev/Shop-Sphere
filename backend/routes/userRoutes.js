@@ -12,6 +12,7 @@ import {
   getSingleUser,
   deleteUser,
   updateUserRole,
+  updateUserAvatar,
 } from "../controllers/userController.js";
 import { isAuthUser, restrictTo } from "../middlewares/auth.js";
 const router = express.Router();
@@ -26,6 +27,7 @@ router.route("/resetPassword/:token").put(resetPassword);
 router.use(isAuthUser);
 router.route("/me").get(getUserDetails).put(updateProfile);
 router.route("/updatePassword").put(upadatePassword);
+router.route("/avatar").put(updateUserAvatar)
 
 // * Admin only
 router.use(restrictTo("admin"));

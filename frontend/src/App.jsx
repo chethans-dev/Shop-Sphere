@@ -14,6 +14,9 @@ import { useDispatch } from "react-redux";
 import { clearErrors } from "./store/reducers/userSlice";
 import ProfilePage from "./pages/ProfilePage";
 import OrdersPage from "./pages/OrdersPage";
+import ProtectedRoute from "./components/Route/ProtectedRoute";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -26,8 +29,18 @@ const router = createBrowserRouter([
       { path: "product/:id", element: <ProductDetails /> },
       { path: "login", element: <LoginPage /> },
       { path: "signup", element: <SignupPage /> },
-      { path: "account", element: <ProfilePage /> },
-      { path: "orders", element: <OrdersPage /> },
+      {
+        path: "account",
+        element: <ProtectedRoute />,
+        children: [{ index: true, element: <ProfilePage /> }],
+      },
+      {
+        path: "orders",
+        element: <ProtectedRoute />,
+        children: [{ index: true, element: <OrdersPage /> }],
+      },
+      { path: "forgot-password", element: <ForgotPasswordPage /> },
+      { path: "reset-password/:token", element: <ResetPasswordPage /> },
     ],
   },
 ]);

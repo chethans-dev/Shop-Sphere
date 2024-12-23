@@ -9,13 +9,24 @@ import DetailsLoader from "../Loader/DetailsLoader";
 import Testimonials from "./Testimonials";
 import { clearErrors } from "../../store/reducers/productSlice";
 import MetaData from "../layout/MetaData";
+import { addToCart } from "../../store/reducers/cartSlice";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const { product, loading, error } = useSelector((state) => state.product);
 
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+
+  const increaseQuantity = () => {
+    if (product?.stock <= quantity) return;
+    setQuantity(quantity + 1);
+  };
+
+  const decreaseQuantity = () => {
+    if (quantity === 1) return;
+    setQuantity(quantity - 1);
+  };
 
   const options = {
     edit: false,
@@ -35,6 +46,19 @@ const ProductDetails = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleAddToCart = () => {
+    const payload = {
+      id: product?._id,
+      name: product?.name,
+      price: product?.price,
+      image: product?.images[0].url,
+      stock: product?.stock,
+      quantity,
+    };
+    dispatch(addToCart(payload));
+    toast.success("Added to cart", { position: "top-right" });
+  };
 
   if (loading)
     return (
@@ -94,7 +118,7 @@ const ProductDetails = () => {
                     id="decreaseButton"
                     className="absolute bg-black right-9 top-1 rounded bg-slate-800 p-1.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                     type="button"
-                    onClick={() => setQuantity(quantity - 1)}
+                    onClick={decreaseQuantity}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -109,13 +133,14 @@ const ProductDetails = () => {
                     id="amountInput"
                     type="number"
                     value={quantity}
+                    readOnly
                     className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-20 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <button
                     id="increaseButton"
                     className="bg-black absolute right-1 top-1 rounded bg-slate-800 p-1.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                     type="button"
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={increaseQuantity}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -131,10 +156,10 @@ const ProductDetails = () => {
 
               {product?.stock >= 1 ? (
                 <button
-                  href="#"
                   title=""
                   className="text-black mt-4 sm:mt-0 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 flex items-center justify-center"
                   role="button"
+                  onClick={handleAddToCart}
                 >
                   <svg
                     className="w-5 h-5 -ms-2 me-2"

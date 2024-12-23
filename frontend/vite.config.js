@@ -10,7 +10,7 @@ export default defineConfig({
     proxy: {
       // Proxy API requests
       "/api": {
-        target: "http://172.19.224.1:3000", // Your backend URL
+        target: "http://172.20.160.1:3000", // Your backend URL
       },
     },
   },

@@ -7,18 +7,26 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import MetaData from "../components/layout/MetaData";
-import { updateUser } from "../store/actions/userActions";
+import {
+  updateAvatar,
+  updatePassword,
+  updateUser,
+} from "../store/actions/userActions";
 import toast from "react-hot-toast";
+import { clearErrors } from "../store/reducers/userSlice";
 
 const ProfilePage = () => {
-  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { user, error } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
     mobile: user?.mobile || "",
   });
+
+  const [avatar, setAvatar] = useState(user?.avatar?.url || "");
+  const [avatarFile, setAvatarFile] = useState(null);
 
   useEffect(() => {
     setFormData({
@@ -26,6 +34,7 @@ const ProfilePage = () => {
       email: user?.email || "",
       mobile: user?.mobile || "",
     });
+    setAvatar(user?.avatar?.url || "");
   }, [user]);
 
   const handleInputChange = (e) => {
@@ -33,12 +42,41 @@ const ProfilePage = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const navigate = useNavigate();
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAvatarUpload = () => {
+    if (!avatarFile) {
+      toast.error("Please select an image to upload.", {
+        position: "top-right",
+      });
+      return;
+    }
+    const formData = new FormData();
+    formData.append("avatar", avatarFile);
+    dispatch(updateAvatar(formData));
+    toast.success("Avatar updated successfully.", {
+      position: "top-right",
+    });
+  };
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isAuthenticated) navigate("/login");
-  }, [isAuthenticated, navigate]);
+    if (error) {
+      toast.error(error, { position: "top-right" });
+      dispatch(clearErrors());
+    }
+  }, [error]);
   // Function to get the year
   function getYear(isoDate) {
     const date = new Date(isoDate);
@@ -80,6 +118,15 @@ const ProfilePage = () => {
     });
   };
 
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    dispatch(updatePassword(data));
+    form.reset();
+  };
+
   return (
     <div className="container rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
       <MetaData title="Account" />
@@ -88,12 +135,31 @@ const ProfilePage = () => {
         {/* Avatar Section */}
         <div className="flex flex-col items-center">
           <Avatar
-            src={user?.avatar?.url}
+            src={avatar}
             alt="User Avatar"
             size="xl"
             className="border-2 border-gray-300"
           />
-          <Button color="black" size="sm" className="mt-3">
+          <input
+            id="avatarInput"
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="hidden"
+            name="avatar"
+          />
+          <label
+            htmlFor="avatarInput"
+            className="mt-3 p-1 bg-gray-100 text-gray-800 border border-gray-300 rounded cursor-pointer hover:bg-gray-200 transition"
+          >
+            Select Image
+          </label>
+          <Button
+            color="black"
+            size="sm"
+            className="mt-3"
+            onClick={handleAvatarUpload}
+          >
             Change Avatar
           </Button>
         </div>
@@ -149,11 +215,14 @@ const ProfilePage = () => {
         <Card className="w-full md:w-[48%] shadow-md">
           <CardBody>
             <h3 className="text-xl font-semibold mb-4">Change Password</h3>
-            <form className="flex flex-col gap-4">
+            <form
+              className="flex flex-col gap-4"
+              onSubmit={handlePasswordSubmit}
+            >
               <Input
                 label="Current Password"
                 type="password"
-                name="currentPassword"
+                name="oldPassword"
                 required
               />
               <Input
@@ -168,7 +237,9 @@ const ProfilePage = () => {
                 name="confirmPassword"
                 required
               />
-              <Button color="black">Save Changes</Button>
+              <Button color="black" type="submit">
+                Save Changes
+              </Button>
             </form>
           </CardBody>
         </Card>

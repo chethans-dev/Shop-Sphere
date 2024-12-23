@@ -20,6 +20,7 @@ const SignupPage = () => {
   useEffect(() => {
     if (error) {
       toast.error(error, { position: "top-right" });
+      dispatch(clearErrors());
     }
 
     if (isAuthenticated) {
