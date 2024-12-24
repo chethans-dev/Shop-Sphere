@@ -5,7 +5,7 @@ const Input = ({ labelName = "", type="text" }) => {
   return (
     <div>
       <label
-        for={name}
+        htmlFor={name}
         className="block text-sm font-medium leading-6 text-gray-900"
       >
         {labelName}

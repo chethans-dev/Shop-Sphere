@@ -128,7 +128,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="container rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
+    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
       <MetaData title="Account" />
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row items-center gap-6">

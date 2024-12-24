@@ -17,6 +17,7 @@ import OrdersPage from "./pages/OrdersPage";
 import ProtectedRoute from "./components/Route/ProtectedRoute";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import CartPage from "./pages/CartPage";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,11 @@ const router = createBrowserRouter([
       },
       { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "reset-password/:token", element: <ResetPasswordPage /> },
+      {
+        path: "cart",
+        element: <ProtectedRoute />,
+        children: [{ index: true, element: <CartPage /> }],
+      },
     ],
   },
 ]);
