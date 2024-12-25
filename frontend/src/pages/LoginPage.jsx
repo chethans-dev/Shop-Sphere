@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Link, useNavigate } from "react-router-dom";
+import {Form, Link, useLocation, useNavigate} from "react-router-dom";
 import Logo from "../assets/images/logo.png";
 import Input from "../components/@/Input";
 import FormButton from "../components/@/FormButton";
@@ -16,6 +16,8 @@ const LoginPage = () => {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirect = location?.search ? location.search.split("=")[1] : "/account";
 
   useEffect(() => {
     if (error) {
@@ -23,9 +25,9 @@ const LoginPage = () => {
       dispatch(clearErrors());
     }
     if (isAuthenticated) {
-      navigate("/account");
+      navigate(redirect);
     }
-  }, [dispatch, error, isAuthenticated, navigate]);
+  }, [dispatch, error, isAuthenticated, navigate, redirect]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Root from "./pages/Root";
-// import Products from "./pages/Products";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./components/layout/Home/Home";
 import ProductsPage from "./pages/ProductsPage";
@@ -18,6 +17,8 @@ import ProtectedRoute from "./components/Route/ProtectedRoute";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CartPage from "./pages/CartPage";
+import ShippingPage from "./pages/ShippingPage.jsx";
+import ConfirmOrder from "./pages/ConfirmOrder.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,11 +43,17 @@ const router = createBrowserRouter([
       },
       { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "reset-password/:token", element: <ResetPasswordPage /> },
+      { path: "cart", element: <CartPage /> },
       {
-        path: "cart",
-        element: <ProtectedRoute />,
-        children: [{ index: true, element: <CartPage /> }],
+        path: "shipping",
+        element: <ProtectedRoute/>,
+        children:[{index: true, element: <ShippingPage/>}]
       },
+      {
+        path: "order/confirm",
+        element: <ProtectedRoute/>,
+        children:[{index: true, element: <ConfirmOrder/>}]
+      }
     ],
   },
 ]);

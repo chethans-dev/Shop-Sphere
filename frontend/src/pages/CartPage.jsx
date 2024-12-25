@@ -1,17 +1,39 @@
 import { useState } from "react";
 import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {Link, useNavigate} from "react-router-dom";
+import {removeFromCart, updateQuantity} from "../store/reducers/cartSlice.js";
+import MetaData from "../components/layout/MetaData.jsx";
 
 const ShoppingCart = () => {
   const { cartItems, totalPrice } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const updateQuantity = (id, change) => {};
+  const handleUpdateQuantity = (id, change) => {
+    const existingItem = cartItems.find((item) => item.id === id);
+    if (existingItem) {
+      const newQuantity = existingItem.quantity + change;
+      if(newQuantity > existingItem.stock) return;
+      if (newQuantity <= 0) {
+        dispatch(removeFromCart(id));
+      } else {
+        dispatch(updateQuantity({id, quantity: newQuantity}));
+      }
+    }
+  };
 
-  const removeItem = (id) => {};
+  const removeItem = (id) => {
+    dispatch(removeFromCart(id));
+  };
+
+  const handleCheckout = () => {
+    navigate("/login?redirect=/shipping");
+  }
 
   return (
     <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
+      <MetaData title="Cart" />
       <div className="p-6 space-y-6">
         {cartItems.map((item) => (
           <div
@@ -34,7 +56,7 @@ const ShoppingCart = () => {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => updateQuantity(item.id, -1)}
+                  onClick={() => handleUpdateQuantity(item.id, -1)}
                   className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-black rounded"
                   aria-label="Decrease quantity"
                 >
@@ -42,7 +64,7 @@ const ShoppingCart = () => {
                 </button>
                 <span className="w-8 text-center">{item.quantity}</span>
                 <button
-                  onClick={() => updateQuantity(item.id, 1)}
+                  onClick={() => handleUpdateQuantity(item.id, 1)}
                   className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-black rounded"
                   aria-label="Increase quantity"
                 >
@@ -59,6 +81,7 @@ const ShoppingCart = () => {
             </div>
           </div>
         ))}
+        {cartItems && cartItems.length === 0 && <h2 className="text-lg font-medium text-gray-900">No items</h2>}
       </div>
       <div className="bg-gray-50 p-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -69,12 +92,13 @@ const ShoppingCart = () => {
             </span>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <button
-              className="w-full sm:w-auto bg-black text-white px-6 py-3 rounded-md font-medium focus:ring-black focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
-              aria-label="Proceed to checkout"
+            {cartItems && cartItems.length > 0 && <button
+                className="w-full sm:w-auto bg-black text-white px-6 py-3 rounded-md font-medium focus:ring-black focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
+                aria-label="Proceed to checkout"
+                onClick={handleCheckout}
             >
               Checkout
-            </button>
+            </button>}
             <Link
               className="w-full sm:w-auto bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
               aria-label="Continue shopping"

@@ -5,7 +5,7 @@ const loadCartFromStorage = () => {
   const cart = localStorage.getItem("cart");
   return cart
     ? JSON.parse(cart)
-    : { cartItems: [], totalQuantity: 0, totalPrice: 0 };
+    : { cartItems: [], totalQuantity: 0, totalPrice: 0, shippingInfo: {} };
 };
 
 // Helper to save cart to localStorage
@@ -74,6 +74,10 @@ const cartSlice = createSlice({
       state.totalPrice = 0;
       saveCartToStorage(state);
     },
+    saveShippingInfo(state, action) {
+      state.shippingInfo = action.payload;
+      saveCartToStorage(state);
+    },
     clearErrors(state) {
       state.error = null;
     },
@@ -86,6 +90,7 @@ export const {
   updateQuantity,
   clearCart,
   clearErrors,
+  saveShippingInfo
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

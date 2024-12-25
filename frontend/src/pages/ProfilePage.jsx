@@ -64,9 +64,6 @@ const ProfilePage = () => {
     const formData = new FormData();
     formData.append("avatar", avatarFile);
     dispatch(updateAvatar(formData));
-    toast.success("Avatar updated successfully.", {
-      position: "top-right",
-    });
   };
 
   const dispatch = useDispatch();
