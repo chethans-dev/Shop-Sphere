@@ -8,7 +8,11 @@ import morgan from "morgan";
 import products from "./routes/productsRoutes.js";
 import users from "./routes/userRoutes.js";
 import orders from "./routes/orderRoutes.js";
+import payment from "./routes/paymentRoutes.js";
 import { globalErrorHandler } from "./middlewares/error.js";
+import { config } from "dotenv";
+
+config({ path: "backend/config/config.env" });
 
 const swaggerDocument = JSON.parse(
   fs.readFileSync(path.resolve("./backend/oas.json"), "utf-8")
@@ -25,6 +29,7 @@ app.use("/api-docs", serve, setup(swaggerDocument));
 app.use("/api/v1/products", products);
 app.use("/api/v1/users", users);
 app.use("/api/v1/orders", orders);
+app.use("/api/v1/payment", payment);
 app.use(globalErrorHandler);
 
 export default app;

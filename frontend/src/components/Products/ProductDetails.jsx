@@ -69,7 +69,7 @@ const ProductDetails = () => {
       </section>
     );
   return (
-    <section className="py-8 m-10 rounded-md bg-white md:py-16 dark:bg-gray-900 antialiased">
+    <section className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg antialiased">
       <MetaData title={product?.name} />
       <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0">
         <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">

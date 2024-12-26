@@ -7,7 +7,7 @@ import ProductsPage from "./pages/ProductsPage";
 import LoginPage from "./pages/LoginPage";
 import ProductDetails from "./components/Products/ProductDetails";
 import SignupPage from "./pages/SignupPage";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { loadUser } from "./store/actions/userActions";
 import { useDispatch } from "react-redux";
 import { clearErrors } from "./store/reducers/userSlice";
@@ -19,6 +19,11 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CartPage from "./pages/CartPage";
 import ShippingPage from "./pages/ShippingPage.jsx";
 import ConfirmOrder from "./pages/ConfirmOrder.jsx";
+import { getSPK } from "./apis/stripe/stripe.js";
+import PaymentPage from "./pages/PaymentPage.jsx";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import OrderSuccessPage from "./pages/OrderSuccessPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -36,37 +41,58 @@ const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [{ index: true, element: <ProfilePage /> }],
       },
-      {
-        path: "orders",
-        element: <ProtectedRoute />,
-        children: [{ index: true, element: <OrdersPage /> }],
-      },
       { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "reset-password/:token", element: <ResetPasswordPage /> },
       { path: "cart", element: <CartPage /> },
       {
         path: "shipping",
-        element: <ProtectedRoute/>,
-        children:[{index: true, element: <ShippingPage/>}]
+        element: <ProtectedRoute />,
+        children: [{ index: true, element: <ShippingPage /> }],
       },
       {
-        path: "order/confirm",
-        element: <ProtectedRoute/>,
-        children:[{index: true, element: <ConfirmOrder/>}]
-      }
+        path: "order",
+        element: <ProtectedRoute />,
+        children: [
+          { path: "confirm", element: <ConfirmOrder /> },
+          { path: "payment", element: <PaymentPage /> },
+        ],
+      },
+      {
+        path: "success",
+        element: <ProtectedRoute />,
+        children: [{ index: true, element: <OrderSuccessPage /> }],
+      },
+      {
+        path: "orders",
+        element: <ProtectedRoute />,
+        children: [{ index: true, element: <OrdersPage /> }],
+      },
     ],
   },
 ]);
 
 function App() {
   const dispatch = useDispatch();
+  const [stripePromise, setStripePromise] = useState(null);
+
+  const getKey = async () => {
+    const key = await getSPK();
+    setStripePromise(loadStripe(key?.sbk)); // Initialize Stripe
+  };
+
   useEffect(() => {
     dispatch(loadUser());
     dispatch(clearErrors());
+    getKey();
   }, [dispatch]);
+
   return (
     <>
-      <RouterProvider router={router} />
+      {stripePromise && (
+        <Elements stripe={stripePromise}>
+          <RouterProvider router={router} />
+        </Elements>
+      )}
       <Toaster />
     </>
   );

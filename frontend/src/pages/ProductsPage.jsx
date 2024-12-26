@@ -59,13 +59,12 @@ const ProductsPage = () => {
     <div>
       <MetaData title="Products" />
       <Filters />
-      <div className="container rounded-md bg-white flex flex-wrap gap-4 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-full">
+      <div className="rounded-md bg-white flex flex-wrap gap-4 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-full">
         {loading
           ? Array.from({ length: 8 }, (_, index) => <Loader key={index} />)
           : products.map((product) => (
               <ProductCard product={product} key={product._id} />
             ))}
-        {/* {products.length === 0 && <>No products found!!</>} */}
       </div>
       <div className="bottom-0 py-4 flex justify-center items-center shadow-md">
         <ReactPaginate

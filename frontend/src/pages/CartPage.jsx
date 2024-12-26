@@ -6,7 +6,7 @@ import {removeFromCart, updateQuantity} from "../store/reducers/cartSlice.js";
 import MetaData from "../components/layout/MetaData.jsx";
 
 const ShoppingCart = () => {
-  const { cartItems, totalPrice } = useSelector((state) => state.cart);
+  const { cartItems, subTotalPrice } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const ShoppingCart = () => {
   }
 
   return (
-    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
+    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-40 mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
       <MetaData title="Cart" />
       <div className="p-6 space-y-6">
         {cartItems.map((item) => (
@@ -88,7 +88,7 @@ const ShoppingCart = () => {
           <div className="text-gray-900">
             <span className="text-lg">Total:</span>
             <span className="text-2xl font-bold ml-2">
-              ${totalPrice.toFixed(2)}
+              ${subTotalPrice?.toFixed(2)}
             </span>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">

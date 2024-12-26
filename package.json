@@ -24,6 +24,7 @@
     "nodemon": "^3.1.7",
     "path": "^0.12.7",
     "shop-sphere": "file:",
+    "stripe": "^17.5.0",
     "swagger-ui-express": "^5.0.1",
     "validator": "^13.12.0"
   }

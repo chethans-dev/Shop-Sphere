@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardBody,
@@ -10,57 +10,34 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 import MetaData from "../components/layout/MetaData";
+import { myOrders } from "../store/actions/orderActions";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const OrdersPage = () => {
   const [open, setOpen] = useState(false); // State to manage modal visibility
   const [selectedOrder, setSelectedOrder] = useState(null); // State to store selected order details
+  const dispatch = useDispatch();
+  const { orders } = useSelector((state) => state.order);
 
-  // Mock data for user orders
-  const orders = [
-    {
-      id: "001",
-      date: "2024-12-15",
-      total: "$120.50",
-      status: "Delivered",
-      items: [
-        { name: "Wireless Headphones", quantity: 1, price: "$60.00" },
-        { name: "Phone Case", quantity: 2, price: "$30.50" },
-      ],
-    },
-    {
-      id: "002",
-      date: "2024-11-30",
-      total: "$85.20",
-      status: "Shipped",
-      items: [{ name: "Smartwatch", quantity: 1, price: "$85.20" }],
-    },
-    {
-      id: "003",
-      date: "2024-11-20",
-      total: "$45.00",
-      status: "Processing",
-      items: [
-        { name: "Notebook", quantity: 3, price: "$15.00" },
-      ],
-    },
-  ];
+  useEffect(() => {
+    dispatch(myOrders());
+  }, [dispatch]);
 
-  // Function to open the modal and set the selected order
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
     setOpen(true);
   };
 
-  // Function to close the modal
   const handleClose = () => {
     setOpen(false);
     setSelectedOrder(null);
   };
 
   return (
-    <div className="container rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
+    <div className="container rounded-md bg-white flex flex-col gap-6 justify-center mx-auto w-[90vw] p-10 max-w-5xl shadow-lg my-40">
       <MetaData title="Orders" />
-      
+
       {/* Header */}
       <Typography variant="h4" color="blue-gray" className="text-center mb-6">
         My Orders
@@ -82,28 +59,28 @@ const OrdersPage = () => {
             <tbody>
               {orders.map((order, index) => (
                 <tr
-                  key={order.id}
+                  key={order._id}
                   className={`border-b ${
                     index % 2 === 0 ? "bg-gray-50" : "bg-white"
                   }`}
                 >
-                  <td className="py-3 px-4">{order.id}</td>
-                  <td className="py-3 px-4">{order.date}</td>
-                  <td className="py-3 px-4">{order.total}</td>
+                  <td className="py-3 px-4">{order._id}</td>
+                  <td className="py-3 px-4">{order?.paidAt.slice(0, 10)}</td>
+                  <td className="py-3 px-4">{order?.totalPrice.toFixed(2)}</td>
                   <td
                     className={`py-3 px-4 font-semibold ${
-                      order.status === "Delivered"
+                      order.orderStatus === "Delivered"
                         ? "text-green-600"
-                        : order.status === "Shipped"
+                        : order.orderStatus === "Shipped"
                         ? "text-blue-600"
                         : "text-yellow-600"
                     }`}
                   >
-                    {order.status}
+                    {order.orderStatus}
                   </td>
                   <td className="py-3 px-4">
                     <Button
-                      color="blue"
+                      color="black"
                       size="sm"
                       className="mr-2"
                       onClick={() => handleViewDetails(order)}
@@ -124,24 +101,43 @@ const OrdersPage = () => {
           <DialogHeader>Order Details</DialogHeader>
           <DialogBody divider>
             <Typography variant="paragraph" color="blue-gray" className="mb-2">
-              <strong>Order ID:</strong> {selectedOrder.id}
+              <strong style={{ fontWeight: "bold" }}>Order ID:</strong>{" "}
+              {selectedOrder._id}
             </Typography>
             <Typography variant="paragraph" color="blue-gray" className="mb-2">
-              <strong>Date:</strong> {selectedOrder.date}
+              <strong style={{ fontWeight: "bold" }}>Date:</strong>{" "}
+              {selectedOrder?.paidAt.slice(0, 10)}
             </Typography>
             <Typography variant="paragraph" color="blue-gray" className="mb-2">
-              <strong>Total:</strong> {selectedOrder.total}
+              <strong style={{ fontWeight: "bold" }}>Total:</strong> $
+              {selectedOrder?.totalPrice.toFixed(2)}
             </Typography>
             <Typography variant="paragraph" color="blue-gray" className="mb-2">
-              <strong>Status:</strong> {selectedOrder.status}
+              <strong style={{ fontWeight: "bold" }}>Status:</strong>{" "}
+              {selectedOrder?.orderStatus}
+            </Typography>
+            <Typography variant="paragraph" color="blue-gray" className="mb-2">
+              <strong style={{ fontWeight: "bold" }}>Shipping Address:</strong>{" "}
+              {`${selectedOrder.shippingInfo.address}, ${selectedOrder.shippingInfo.city}, ${selectedOrder.shippingInfo.state}, ${selectedOrder.shippingInfo.pinCode}, ${selectedOrder.shippingInfo.country}`}
+            </Typography>
+            <Typography variant="paragraph" color="blue-gray" className="mb-2">
+              <strong style={{ fontWeight: "bold" }}>Contact:</strong>{" "}
+              {selectedOrder.shippingInfo.phoneNo}
             </Typography>
             <Typography variant="paragraph" color="blue-gray" className="mb-4">
-              <strong>Items:</strong>
+              <strong style={{ fontWeight: "bold" }}>Items:</strong>
             </Typography>
             <ul className="list-disc list-inside">
-              {selectedOrder.items.map((item, index) => (
+              {selectedOrder.orderItems.map((item, index) => (
                 <li key={index}>
-                  {item.name} - {item.quantity} x {item.price}
+                  <Link to={`/product/${item.product}`}>
+                    <img
+                      src={item?.image}
+                      alt={item?.name}
+                      className="w-10 h-10 inline-block mr-2"
+                    />
+                    {item?.name} - {item?.quantity} x ${item?.price.toFixed(2)}
+                  </Link>
                 </li>
               ))}
             </ul>
