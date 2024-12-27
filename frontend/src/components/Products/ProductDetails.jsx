@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import ReactStars from "react-rating-stars-component";
-import { fetchProductDetails } from "../../store/actions/productActions";
+import { createReview, fetchProductDetails } from "../../store/actions/productActions";
 import DetailsLoader from "../Loader/DetailsLoader";
 import Testimonials from "./Testimonials";
 import { clearErrors } from "../../store/reducers/productSlice";
@@ -17,6 +17,10 @@ const ProductDetails = () => {
   const { product, loading, error } = useSelector((state) => state.product);
 
   const [quantity, setQuantity] = useState(1);
+
+  const [showModal, setShowModal] = useState(false);
+  const [reviewText, setReviewText] = useState("");
+  const [reviewRating, setReviewRating] = useState(0);
 
   const increaseQuantity = () => {
     if (product?.stock <= quantity) return;
@@ -58,6 +62,25 @@ const ProductDetails = () => {
     };
     dispatch(addToCart(payload));
     toast.success("Added to cart", { position: "top-right" });
+  };
+
+  const handleSubmitReview = () => {
+    if (!reviewRating || !reviewText) {
+      toast.error("Please provide both rating and review text.");
+      return;
+    }
+    const payload = {
+      productId: id,
+      rating: reviewRating,
+      comment: reviewText,
+    };
+    // Dispatch action or make API call to submit review
+    console.log("Review Submitted:", payload);
+    dispatch(createReview(payload));
+    dispatch(fetchProductDetails(id));
+    setShowModal(false);
+    setReviewText("");
+    setReviewRating(0);
   };
 
   if (loading)
@@ -190,9 +213,49 @@ const ProductDetails = () => {
             <p className="mb-6 text-gray-500 dark:text-gray-400">
               {product?.description}
             </p>
+            <button
+              className="mt-4 bg-black text-white px-4 py-2 rounded-md"
+              onClick={() => setShowModal(true)}
+            >
+              Add Review
+            </button>
           </div>
         </div>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-md w-[90%] max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Add Your Review</h2>
+            <ReactStars
+              count={5}
+              onChange={(newRating) => setReviewRating(newRating)}
+              size={24}
+              activeColor="#ffd700"
+            />
+            <textarea
+              className="w-full mt-4 border rounded-md p-2"
+              rows="4"
+              placeholder="Write your review here..."
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+            />
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                className="bg-gray-300 px-4 py-2 rounded-md"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-black text-white px-4 py-2 rounded-md"
+                onClick={handleSubmitReview}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-center" id="reviews">
         <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800 w-[87vw]" />
       </div>

@@ -4,6 +4,7 @@ import {
   createProductReview,
   deleteProduct,
   deleteReview,
+  getAllAdminProducts,
   getAllProducts,
   getAllReviews,
   getCategories,
@@ -13,13 +14,16 @@ import {
 import { isAuthUser, restrictTo } from "../middlewares/auth.js";
 
 const router = Router();
+router
+  .route("/admin")
+  .get(isAuthUser, restrictTo("admin"), getAllAdminProducts);
 
 router
   .route("/")
   .get(getAllProducts)
   .post(isAuthUser, restrictTo("admin"), createProduct);
 
-router.route("/categories").get(getCategories)
+router.route("/categories").get(getCategories);
 
 router.route("/reviews").get(getAllReviews).delete(isAuthUser, deleteReview);
 router.route("/review").put(isAuthUser, createProductReview);

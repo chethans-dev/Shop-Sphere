@@ -166,3 +166,13 @@ export const getCategories = catchAsyncErrors(async (req, res) => {
     res
   );
 });
+
+// Get all products for admin
+export const getAllAdminProducts = catchAsyncErrors(async (req, res) => {
+  const products = await Product.find();
+  return sendSuccessResponse(
+    "Products fetched successfully",
+    { products },
+    res
+  );
+});

@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 // Define Thunks for async actions
 export const fetchAllProducts = createAsyncThunk(
@@ -57,6 +58,21 @@ export const fetchProductCategories = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(`/api/v1/products/categories`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const createReview = createAsyncThunk(
+  "product/createReview",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(`/api/v1/products/review`, payload);
+      toast.success("Review submitted successfully!", {
+        position: "top-right",
+      });
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);

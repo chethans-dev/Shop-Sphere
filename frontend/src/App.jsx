@@ -24,6 +24,13 @@ import PaymentPage from "./pages/PaymentPage.jsx";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import OrderSuccessPage from "./pages/OrderSuccessPage.jsx";
+import AllProducts from "./components/Admin/AllProducts.jsx";
+import CreateProduct from "./components/Admin/CreateProduct.jsx";
+import AdminLayout from "./pages/AdminPage.jsx";
+import Dashboard from "./components/Admin/Dashboard.jsx";
+import Users from "./components/Admin/Users.jsx";
+import Reviews from "./components/Admin/Reviews.jsx";
+import Orders from "./components/Admin/Orders.jsx";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +74,23 @@ const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [{ index: true, element: <OrdersPage /> }],
       },
+      {
+        path: "admin",
+        element: <ProtectedRoute isAdmin={true} />,
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+              { path: "dashboard", element: <Dashboard /> },
+              { path: "products", element: <AllProducts /> },
+              { path: "product", element: <CreateProduct /> },
+              { path: "orders", element: <Orders /> },
+              { path: "users", element: <Users /> },
+              { path: "reviews", element: <Reviews /> },
+            ],
+          },
+        ],
+      },
     ],
   },
 ]);
@@ -77,7 +101,7 @@ function App() {
 
   const getKey = async () => {
     const key = await getSPK();
-    setStripePromise(loadStripe(key?.sbk)); // Initialize Stripe
+    setStripePromise(loadStripe(key?.sbk));
   };
 
   useEffect(() => {
