@@ -82,11 +82,13 @@ export const updateOrder = catchAsyncErrors(async (req, res, next) => {
   if (order.orderStatus === "Delivered")
     return next(new ErrorHandler("You have already delivered this order", 404));
 
-  for (const item of order.orderItems) {
-    await updateStock(item.product, item.quantity);
+  const { status } = req.body;
+  if (status === "Shipped") {
+    for (const item of order.orderItems) {
+      await updateStock(item.product, item.quantity);
+    }
   }
 
-  const { status } = req.body;
   order.orderStatus = status;
   if (status === "Delivered") order.deliveredAt = Date.now();
 
