@@ -35,7 +35,7 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="container rounded-md bg-white flex flex-col gap-6 justify-center mx-auto w-[90vw] p-10 max-w-5xl shadow-lg my-40">
+    <div className="container rounded-md bg-white flex flex-col gap-6 justify-center mx-auto w-[90vw] p-10 max-w-5xl shadow-lg my-[2vmax]">
       <MetaData title="Orders" />
 
       {/* Header */}
@@ -73,7 +73,7 @@ const OrdersPage = () => {
                         ? "text-green-600"
                         : order.orderStatus === "Shipped"
                         ? "text-blue-600"
-                        : "text-yellow-600"
+                        : "text-yellow-900"
                     }`}
                   >
                     {order.orderStatus}

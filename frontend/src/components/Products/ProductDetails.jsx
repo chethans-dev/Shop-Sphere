@@ -64,7 +64,7 @@ const ProductDetails = () => {
     toast.success("Added to cart", { position: "top-right" });
   };
 
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async () => {
     if (!reviewRating || !reviewText) {
       toast.error("Please provide both rating and review text.");
       return;
@@ -74,10 +74,9 @@ const ProductDetails = () => {
       rating: reviewRating,
       comment: reviewText,
     };
-    // Dispatch action or make API call to submit review
-    console.log("Review Submitted:", payload);
-    dispatch(createReview(payload));
-    dispatch(fetchProductDetails(id));
+    
+    await dispatch(createReview(payload));
+    await dispatch(fetchProductDetails(id));
     setShowModal(false);
     setReviewText("");
     setReviewRating(0);
@@ -128,8 +127,6 @@ const ProductDetails = () => {
 
             <div className="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
               <a
-                href="#"
-                title=""
                 className="flex items-center gap-4 justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                 role="button"
               >
@@ -223,7 +220,7 @@ const ProductDetails = () => {
         </div>
       </div>
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
           <div className="bg-white p-6 rounded-md w-[90%] max-w-md">
             <h2 className="text-xl font-semibold mb-4">Add Your Review</h2>
             <ReactStars

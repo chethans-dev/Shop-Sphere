@@ -96,7 +96,6 @@ export const updateOrder = catchAsyncErrors(async (req, res, next) => {
 
 async function updateStock(id, quantity) {
   const product = await Product.findById(id);
-  console.log(product);
 
   const remaining = product.stock - quantity;
   product.stock = remaining > 0 ? remaining : 0;

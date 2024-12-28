@@ -31,6 +31,7 @@ import Dashboard from "./components/Admin/Dashboard.jsx";
 import Users from "./components/Admin/Users.jsx";
 import Reviews from "./components/Admin/Reviews.jsx";
 import Orders from "./components/Admin/Orders.jsx";
+import EditProduct from "./components/Admin/EditProduct.jsx";
 
 const router = createBrowserRouter([
   {
@@ -87,6 +88,7 @@ const router = createBrowserRouter([
               { path: "orders", element: <Orders /> },
               { path: "users", element: <Users /> },
               { path: "reviews", element: <Reviews /> },
+              { path: "edit/:id", element: <EditProduct /> },
             ],
           },
         ],

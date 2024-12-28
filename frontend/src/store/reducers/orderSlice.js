@@ -6,7 +6,7 @@ const initialState = {
   loading: false,
   error: null,
   success: false,
-  orders: [],
+  orders: [], // my orders
 };
 
 const orderSlice = createSlice({

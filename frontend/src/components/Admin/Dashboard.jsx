@@ -1,6 +1,6 @@
-import React from "react";
 import { Card, Typography } from "@material-tailwind/react";
 import { Doughnut, Line } from "react-chartjs-2";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -12,6 +12,11 @@ import {
   LineElement,
 } from "chart.js";
 import MetaData from "../layout/MetaData";
+import { useEffect } from "react";
+import {
+  fetchAllProducts,
+  getAllOrders,
+} from "../../store/actions/adminActions";
 
 ChartJS.register(
   ArcElement,
@@ -24,14 +29,31 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  const { products } = useSelector((state) => state.admin);
+  const { orders } = useSelector((state) => state.admin);
+
+  const totalAmount = orders.reduce((acc, item) => acc + item.totalPrice, 0);
+
+  useEffect(() => {
+    dispatch(fetchAllProducts());
+    dispatch(getAllOrders());
+  }, [dispatch]);
+
+  let outOfStock = 0;
+  products &&
+    products.forEach((product) => {
+      if (product.stock === 0) {
+        outOfStock += 1;
+      }
+    });
   const doughnutData = {
     labels: ["In Stock", "Out of Stock"],
     datasets: [
       {
         label: "Products",
-        data: [100, 20],
-        backgroundColor: ["#4CAF50", "#FF5722"],
-        hoverBackgroundColor: ["#45A049", "#E64A19"],
+        data: [products.length - outOfStock, outOfStock],
+        backgroundColor: ["black", "grey"],
       },
     ],
   };
@@ -43,8 +65,8 @@ const Dashboard = () => {
         label: "Total Amount",
         data: [1200, 1900, 3200, 2400, 3100, 4500],
         fill: true,
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
+        backgroundColor: "black",
+        borderColor: "black",
         borderWidth: 2,
         tension: 0.4,
       },
@@ -52,47 +74,47 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-[90vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
+    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-[50vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
       <MetaData title="Admin Dashboard" />
       <Typography variant="h4" color="blue-gray" className="mb-4 text-center">
-        Admin Dashboard
+        Dashboard
       </Typography>
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         <Card className="p-6 text-center shadow">
           <Typography variant="h6" className="mb-2">
             Total Amount
           </Typography>
-          <Typography variant="h5" color="blue">
-            $450
+          <Typography variant="h5" color="black">
+            ${totalAmount}
           </Typography>
         </Card>
         <Card className="p-6 text-center shadow">
           <Typography variant="h6" className="mb-2">
             Total Products
           </Typography>
-          <Typography variant="h5" color="blue">
-            120
+          <Typography variant="h5" color="black">
+            {products?.length}
           </Typography>
         </Card>
         <Card className="p-6 text-center shadow">
           <Typography variant="h6" className="mb-2">
             Total Orders
           </Typography>
-          <Typography variant="h5" color="blue">
-            230
+          <Typography variant="h5" color="black">
+            {orders.length}
           </Typography>
         </Card>
         <Card className="p-6 text-center shadow">
           <Typography variant="h6" className="mb-2">
             Total Users
           </Typography>
-          <Typography variant="h5" color="blue">
+          <Typography variant="h5" color="black">
             450
           </Typography>
         </Card>
       </div>
       <div className="grid grid-cols-1 gap-6 mt-6">
-        <Card className="p-6 shadow h-[400px] flex items-center justify-center">
+        <Card className="p-8 shadow h-[400px] flex items-center justify-center">
           <Typography
             variant="h6"
             color="blue-gray"

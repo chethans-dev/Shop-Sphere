@@ -119,7 +119,6 @@ const PaymentPage = () => {
         setLoading(false);
       }
     } catch (error) {
-      console.log(error);
       toast.error(`Error: ${error.response?.data?.message}`, {
         position: "top-right",
       });

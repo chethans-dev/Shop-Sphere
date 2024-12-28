@@ -1,7 +1,10 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"; // For navigation to edit product page
-import { fetchAllProducts } from "../../store/actions/adminActions";
+import {
+  deleteProduct,
+  fetchAllProducts,
+} from "../../store/actions/adminActions";
 import {
   Table,
   TableBody,
@@ -13,16 +16,15 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Typography,
 } from "@mui/material";
-import { Button } from "@material-tailwind/react";
+import { Button, Typography } from "@material-tailwind/react";
 
 const AllProducts = () => {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.admin);
 
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [productIdToDelete, setProductIdToDelete] = React.useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState(null);
 
   useEffect(() => {
     dispatch(fetchAllProducts());
@@ -40,15 +42,14 @@ const AllProducts = () => {
 
   const handleDeleteConfirm = () => {
     if (productIdToDelete) {
-      // dispatch(deleteProduct(productIdToDelete));
+      dispatch(deleteProduct(productIdToDelete));
       setOpenDialog(false);
       setProductIdToDelete(null);
     }
   };
 
   return (
-    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-[90vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
-      {/* Typography for the page title */}
+    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-[50vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
       <Typography variant="h4" component="h1" fontWeight="bold" mb={6}>
         Manage Products
       </Typography>
@@ -72,18 +73,24 @@ const AllProducts = () => {
                 <TableCell>${product.price}</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>
-                  <Link to={`/admin/product/edit/${product._id}`}>
-                    <Button variant="outlined" className="mr-4">
-                      Edit
+                  <div className="flex flex-row gap-2">
+                    <Link to={`/admin/edit/${product._id}`}>
+                      <Button
+                        variant="outlined"
+                        className="w-full text-sm py-2 px-4"
+                      >
+                        Edit
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="filled"
+                      color="black"
+                      className="w-full text-sm py-2 px-4"
+                      onClick={() => handleDeleteDialogOpen(product._id)}
+                    >
+                      Delete
                     </Button>
-                  </Link>
-                  <Button
-                    variant="filled"
-                    color="black"
-                    onClick={() => handleDeleteDialogOpen(product._id)}
-                  >
-                    Delete
-                  </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -100,8 +107,7 @@ const AllProducts = () => {
         <DialogActions>
           <Button
             onClick={handleDeleteDialogClose}
-            variant="filled"
-            color="red"
+            variant="outlined"
           >
             Cancel
           </Button>

@@ -73,7 +73,7 @@ const ProfilePage = () => {
       toast.error(error, { position: "top-right" });
       dispatch(clearErrors());
     }
-  }, [error]);
+  }, [error, dispatch]);
   // Function to get the year
   function getYear(isoDate) {
     const date = new Date(isoDate);

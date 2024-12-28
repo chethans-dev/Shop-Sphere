@@ -7,10 +7,54 @@ import {
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../utils/catchAsync.js";
 import APIFeatures from "../utils/apiFeatures.js";
+import { Readable } from "stream";
+import { v2 as cloudinary } from "cloudinary";
 
 // Create product - Admin
 export const createProduct = catchAsyncErrors(async (req, res) => {
   const productPayload = req.body;
+
+  const images = req.files?.images;
+  let imagesArray = [];
+
+  if (images) {
+    // Normalize images to an array, even if only one file is uploaded
+    const imagesToProcess = Array.isArray(images) ? images : [images];
+
+    // Process each image and upload to Cloudinary
+    for (const image of imagesToProcess) {
+      const bufferStream = new Readable();
+      bufferStream.push(image.data);
+      bufferStream.push(null);
+
+      const uploadedImage = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "products",
+            resource_type: "auto",
+          },
+          (error, result) => {
+            if (error) {
+              return reject(error);
+            }
+            resolve(result);
+          }
+        );
+
+        // Pipe the buffer stream to Cloudinary
+        bufferStream.pipe(uploadStream);
+      });
+
+      // Add uploaded image details to the images array
+      imagesArray.push({
+        public_id: uploadedImage.public_id,
+        url: uploadedImage.secure_url,
+      });
+    }
+  }
+
+  // Add the uploaded images to the product payload
+  productPayload.images = imagesArray;
   productPayload["user"] = req.user.id;
   const product = await Product.create(productPayload);
   return sendCreatedResponse("Product created successfully", product, res);
@@ -61,8 +105,25 @@ export const updateProduct = catchAsyncErrors(async (req, res, next) => {
 // Delete product - Admin
 export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
-  const product = await Product.findByIdAndDelete(id);
+  const product = await Product.findById(id)
+  // const product = await Product.findByIdAndDelete(id);
   if (!product) return next(new ErrorHandler("Product not found", 404));
+
+  // Delete all associated Cloudinary images
+  const imageDeletionPromises = product.images.map(async (image) => {
+    try {
+      await cloudinary.uploader.destroy(image.public_id);
+    } catch (error) {
+      console.error(`Failed to delete image with public_id ${image.public_id}:`, error);
+    }
+  });
+
+  // Wait for all images to be deleted
+  await Promise.all(imageDeletionPromises);
+
+  // Delete the product from the database
+  await product.deleteOne();
+
   return sendNoContentResponse(res);
 });
 

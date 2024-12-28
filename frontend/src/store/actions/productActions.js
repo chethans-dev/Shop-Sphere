@@ -17,30 +17,6 @@ export const fetchAllProducts = createAsyncThunk(
   }
 );
 
-export const createProduct = createAsyncThunk(
-  "product/createProduct",
-  async (productData, { rejectWithValue }) => {
-    try {
-      const { data } = await axios.post("/api/admin/product", productData);
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.response.data.message);
-    }
-  }
-);
-
-export const deleteProduct = createAsyncThunk(
-  "product/deleteProduct",
-  async (id, { rejectWithValue }) => {
-    try {
-      const { data } = await axios.delete(`/api/admin/product/${id}`);
-      return data.success;
-    } catch (error) {
-      return rejectWithValue(error.response.data.message);
-    }
-  }
-);
-
 export const fetchProductDetails = createAsyncThunk(
   "product/fetchProductDetails",
   async (id, { rejectWithValue }) => {
@@ -75,6 +51,9 @@ export const createReview = createAsyncThunk(
       });
       return data;
     } catch (error) {
+      toast.error(error.response.data.message, {
+        position: "top-right",
+      });
       return rejectWithValue(error.response.data.message);
     }
   }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Input,
   Textarea,
@@ -8,22 +8,27 @@ import {
   Avatar,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { createProduct } from "../../store/actions/adminActions";
-import { useNavigate } from "react-router-dom";
+import { editProduct } from "../../store/actions/adminActions";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchProductDetails } from "../../store/actions/productActions";
 
-const CreateProduct = () => {
+const EditProduct = () => {
+  const { id } = useParams();
+
   const { loading } = useSelector((state) => state.admin);
+  const { product } = useSelector((state) => state.product);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [productData, setProductData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    category: "",
-    stock: "",
-  });
-  const [images, setImages] = useState([]);
-  const [imagePreviews, setImagePreviews] = useState([]);
+  const [productData, setProductData] = useState(product);
+
+  useEffect(() => {
+    setProductData(product);
+  }, [product]);
+
+  useEffect(() => {
+    dispatch(fetchProductDetails(id));
+  }, [dispatch, id]);
 
   const categories = [
     "Shoes",
@@ -38,35 +43,15 @@ const CreateProduct = () => {
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-
-    // Preview the uploaded images
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews(previews);
-    setImages(files);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", productData.name);
-    formData.append("description", productData.description);
-    formData.append("price", productData.price);
-    formData.append("category", productData.category);
-    formData.append("stock", productData.stock);
-
-    images.forEach((image) => {
-      formData.append("images", image);
-    });
-    
-    await dispatch(createProduct(formData));
-    navigate("/admin/dashboard");
+    await dispatch(editProduct({ id, product: productData }));
+    navigate("/admin/products");
   };
 
   return (
-    <div className="rounded-md bg-white text-black flex flex-col gap-6 justify-center my-[2vmax] w-[50vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
-      <h1 className="text-2xl font-bold">New Product</h1>
+    <div className="rounded-md bg-white text-black flex flex-col gap-6 justify-center my-[2vmax] w-[90vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
+      <h1 className="text-2xl font-bold">Edit Product</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* Product Name */}
@@ -104,6 +89,7 @@ const CreateProduct = () => {
           onChange={(value) =>
             setProductData((prev) => ({ ...prev, category: value }))
           }
+          value={productData?.category}
         >
           {categories.map((category) => (
             <Option key={category} value={category}>
@@ -123,21 +109,12 @@ const CreateProduct = () => {
         />
 
         {/* Product Images */}
-        <Input
-          type="file"
-          label="Upload Product Images"
-          multiple
-          onChange={handleImageUpload}
-          accept="image/*"
-          required
-        />
-
-        {imagePreviews.length > 0 && (
+        {productData?.images && productData.images.length > 0 && (
           <div className="flex flex-wrap gap-4 mt-4">
-            {imagePreviews.map((preview, index) => (
+            {productData.images.map((image, index) => (
               <Avatar
                 key={index}
-                src={preview}
+                src={image.url}
                 alt="User Avatar"
                 size="xl"
                 className="border-2 border-gray-300"
@@ -148,11 +125,11 @@ const CreateProduct = () => {
 
         {/* Submit Button */}
         <Button type="submit" ripple>
-          {loading ? "Creating Product..." : "Create Product"}
+          {loading ? "Updating Product..." : "Update Product"}
         </Button>
       </form>
     </div>
   );
 };
 
-export default CreateProduct;
+export default EditProduct;

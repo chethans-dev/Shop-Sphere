@@ -1,17 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  createProduct,
+  deleteOrder,
+  deleteProduct,
+  editProduct,
   fetchAllProducts,
   fetchAllUsers,
-  //   fetchAllReviews,
-  //   fetchAllOrders,
-  //   fetchAdminDashboardData,
+  getAllOrders,
+  updateOrder,
 } from "../actions/adminActions";
 
 const initialState = {
   products: [],
+  product: {},
   users: [],
   reviews: [],
   orders: [],
+  order: {},
   dashboardStats: {},
   loading: false,
   error: null,
@@ -58,47 +63,95 @@ const adminDashboardSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Handle fetchAllReviews
-    // builder
-    //   .addCase(fetchAllReviews.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(fetchAllReviews.fulfilled, (state, action) => {
-    //     state.loading = false;
-    //     state.reviews = action.payload.data.reviews;
-    //   })
-    //   .addCase(fetchAllReviews.rejected, (state, action) => {
-    //     state.loading = false;
-    //     state.error = action.payload;
-    //   });
+    // Handle createProduct
+    builder
+      .addCase(createProduct.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload.success;
+        state.product = action.payload.product;
+      })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
 
-    // // Handle fetchAllOrders
-    // builder
-    //   .addCase(fetchAllOrders.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(fetchAllOrders.fulfilled, (state, action) => {
-    //     state.loading = false;
-    //     state.orders = action.payload.data.orders;
-    //   })
-    //   .addCase(fetchAllOrders.rejected, (state, action) => {
-    //     state.loading = false;
-    //     state.error = action.payload;
-    //   });
+    // Handle deleteProduct
+    builder
+      .addCase(deleteProduct.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        const id = action.payload;
+        state.products = state.products.filter((product) => product._id !== id);
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
 
-    // // Handle fetching dashboard stats (products, users, orders, reviews summary)
-    // builder
-    //   .addCase(fetchAdminDashboardData.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(fetchAdminDashboardData.fulfilled, (state, action) => {
-    //     state.loading = false;
-    //     state.dashboardStats = action.payload.data;
-    //   })
-    //   .addCase(fetchAdminDashboardData.rejected, (state, action) => {
-    //     state.loading = false;
-    //     state.error = action.payload;
-    //   });
+    // Handle editProduct
+    builder
+      .addCase(editProduct.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(editProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.product = action.payload.data;
+      })
+      .addCase(editProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle get all orders
+    builder
+      .addCase(getAllOrders.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload.data;
+      })
+      .addCase(getAllOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle editOrder
+    builder
+      .addCase(updateOrder.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedOrder = action.payload.data;
+        state.orders = state.orders.map((order) =>
+          order._id === updatedOrder._id ? updatedOrder : order
+        );
+      })
+      .addCase(updateOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle deleteOrder
+    builder
+      .addCase(deleteOrder.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        const id = action.payload;
+        state.orders = state.orders.filter((order) => order._id !== id);
+      })
+      .addCase(deleteOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

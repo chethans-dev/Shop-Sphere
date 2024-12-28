@@ -5,8 +5,6 @@ import {
   List,
   ListItem,
   ListItemPrefix,
-  ListItemSuffix,
-  Chip,
   Accordion,
   AccordionHeader,
   AccordionBody,
@@ -29,9 +27,9 @@ function Sidebar() {
   };
 
   return (
-    <Card className="h-auto w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 my-[2vmax] mx-auto">
+    <Card className="h-auto w-full max-w-[20rem] p-2 shadow-xl shadow-blue-gray-900/5 my-[2vmax] mx-auto">
       <div className="mb-2 p-4">
-        <Typography variant="h5" color="blue-gray">
+        <Typography variant="h5" color="blue-gray" className="text-center">
           Admin Panel
         </Typography>
       </div>
