@@ -14,9 +14,8 @@ import { config } from "dotenv";
 
 config({ path: "backend/config/config.env" });
 
-const swaggerDocument = JSON.parse(
-  fs.readFileSync(path.resolve("./backend/oas.json"), "utf-8")
-);
+const __dirname = path.resolve();
+
 
 const app = express();
 
@@ -25,11 +24,17 @@ app.use(cookieParser());
 app.use(fileUpload());
 app.use(morgan("dev"));
 
-app.use("/api-docs", serve, setup(swaggerDocument));
 app.use("/api/v1/products", products);
 app.use("/api/v1/users", users);
 app.use("/api/v1/orders", orders);
 app.use("/api/v1/payment", payment);
+
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+app.get("*", (req, res) => {
+	res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
+
 app.use(globalErrorHandler);
 
 export default app;

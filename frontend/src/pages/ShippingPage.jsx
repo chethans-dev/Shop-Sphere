@@ -10,7 +10,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Country, State } from "country-state-city";
 import { saveShippingInfo } from "../store/reducers/cartSlice.js";
-import toast from "react-hot-toast";
 import MetaData from "../components/layout/MetaData.jsx";
 import { useNavigate } from "react-router-dom";
 import CheckoutSteps from "../components/Cart/CheckoutSteps.jsx";
@@ -45,7 +44,7 @@ const ShippingPage = () => {
     if (cartItems && cartItems.length === 0) {
       navigate("/products");
     }
-  }, [cartItems]);
+  }, [cartItems, navigate]);
 
   return (
     <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] mx-auto w-[90vw] p-10 max-w-5xl shadow-lg">
@@ -126,7 +125,6 @@ const ShippingPage = () => {
       </div>
     </div>
   );
-  ƒ;
 };
 
 export default ShippingPage;

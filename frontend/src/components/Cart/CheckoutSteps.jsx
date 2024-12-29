@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import { Step, Stepper, Typography } from "@material-tailwind/react";
 import { StepLabel } from "@mui/material";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";

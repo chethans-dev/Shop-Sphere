@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-binary-expression */
 import {
   Card,
   CardBody,
@@ -255,7 +256,7 @@ const ProfilePage = () => {
         </Card>
 
         {/* Address Section */}
-        <Card className="w-full md:w-[48%] shadow-md">
+        {false && <Card className="w-full md:w-[48%] shadow-md">
           <CardBody>
             <h3 className="text-xl font-semibold mb-4">Saved Addresses</h3>
             <p className="text-gray-700">
@@ -265,10 +266,10 @@ const ProfilePage = () => {
               Manage Addresses
             </Button>
           </CardBody>
-        </Card>
+        </Card>}
 
         {/* Payment Methods */}
-        <Card className="w-full md:w-[48%] shadow-md">
+        {false && <Card className="w-full md:w-[48%] shadow-md">
           <CardBody>
             <h3 className="text-xl font-semibold mb-4">Payment Methods</h3>
             <p className="text-gray-700">Update your saved payment methods.</p>
@@ -276,7 +277,7 @@ const ProfilePage = () => {
               Manage Payments
             </Button>
           </CardBody>
-        </Card>
+        </Card>}
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import MetaData from "../components/layout/MetaData";
 import { useEffect, useState } from "react";
 import { signupUser } from "../store/actions/userActions";
 import toast from "react-hot-toast";
+import { clearErrors } from "../store/reducers/productSlice";
 
 const SignupPage = () => {
   const { error, loading, isAuthenticated } = useSelector(
@@ -16,7 +17,6 @@ const SignupPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ! PENDING_
   useEffect(() => {
     if (error) {
       toast.error(error, { position: "top-right" });

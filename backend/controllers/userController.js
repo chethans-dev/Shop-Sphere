@@ -127,12 +127,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // 3. Create url and message
-  // const resetUrl = `${req.protocol}://${req.get(
-  //   "host"
-  // )}/api/v1/users/resetPassword/${resetToken}`;
-
-  // ! Temp
-  const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+  const resetUrl = `${req.protocol}://${req.get("host")}/reset-password/${resetToken}`;
   const message = `You are receiving this email because you (or someone else) has requested a password reset. Please click on the following link to reset your password: \n\n${resetUrl}\n\nIf you did not request this, please ignore this email and no changes will be made.`;
 
   // 4. Send email
@@ -268,9 +263,17 @@ export const updateUserRole = catchAsyncErrors(async (req, res, next) => {
 
 // * Delete user (admin only)
 export const deleteUser = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.params.id);
+  const user = await User.findById(req.params.id);
 
   if (!user) return next(new ErrorHandler("User not found", 404));
+
+  // Check if user has an avatar to delete
+  if (user.avatar?.public_id) {
+    await cloudinary.uploader.destroy(user.avatar.public_id);
+  }
+
+  // Delete the user from the database
+  await user.deleteOne();
 
   return sendSuccessResponse("User deleted successfully", {}, res);
 });

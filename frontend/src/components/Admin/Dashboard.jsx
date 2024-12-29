@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import {
   fetchAllProducts,
   getAllOrders,
+  getAllUsers,
 } from "../../store/actions/adminActions";
 
 ChartJS.register(
@@ -30,14 +31,14 @@ ChartJS.register(
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { products } = useSelector((state) => state.admin);
-  const { orders } = useSelector((state) => state.admin);
+  const { products, orders, users } = useSelector((state) => state.admin);
 
   const totalAmount = orders.reduce((acc, item) => acc + item.totalPrice, 0);
 
   useEffect(() => {
     dispatch(fetchAllProducts());
     dispatch(getAllOrders());
+    dispatch(getAllUsers());
   }, [dispatch]);
 
   let outOfStock = 0;
@@ -47,6 +48,7 @@ const Dashboard = () => {
         outOfStock += 1;
       }
     });
+
   const doughnutData = {
     labels: ["In Stock", "Out of Stock"],
     datasets: [
@@ -63,7 +65,7 @@ const Dashboard = () => {
     datasets: [
       {
         label: "Total Amount",
-        data: [1200, 1900, 3200, 2400, 3100, 4500],
+        data: [0, totalAmount],
         fill: true,
         backgroundColor: "black",
         borderColor: "black",
@@ -75,7 +77,7 @@ const Dashboard = () => {
 
   return (
     <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-[50vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
-      <MetaData title="Admin Dashboard" />
+      <MetaData title="Dashboard - Admin" />
       <Typography variant="h4" color="blue-gray" className="mb-4 text-center">
         Dashboard
       </Typography>
@@ -109,7 +111,7 @@ const Dashboard = () => {
             Total Users
           </Typography>
           <Typography variant="h5" color="black">
-            450
+            {users.length}
           </Typography>
         </Card>
       </div>

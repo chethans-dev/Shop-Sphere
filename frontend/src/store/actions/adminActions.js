@@ -141,3 +141,86 @@ export const deleteOrder = createAsyncThunk(
     }
   }
 );
+
+// Get all users
+export const getAllUsers = createAsyncThunk(
+  "product/getAllUsers",
+  async (data, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get("/api/v1/users/all");
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// Update user role
+export const updateUserRole = createAsyncThunk(
+  "product/updateUserRole",
+  async ({ id, role }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(`/api/v1/users/${id}`, role);
+      toast.success("User role updated succcessfully.", {
+        position: "top-right",
+      });
+      return data;
+    } catch (error) {
+      toast.error(error.response.data.message, {
+        position: "top-right",
+      });
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// Delete user
+export const deleteUser = createAsyncThunk(
+  "product/deleteUser",
+  async (id, { rejectWithValue }) => {
+    try {
+      await axios.delete(`/api/v1/users/${id}`);
+      toast.success("User deleted succcessfully.", {
+        position: "top-right",
+      });
+      return id;
+    } catch (error) {
+      toast.error(error.response.data.message, {
+        position: "top-right",
+      });
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// Get all reviews of a product
+export const getAllReviews = createAsyncThunk(
+  "product/getAllReviews",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/products/reviews?pid=${id}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// Delete review
+export const deleteReview = createAsyncThunk(
+  "product/deleteReview",
+  async ({ rid, pid }, { rejectWithValue }) => {
+    try {
+      await axios.delete(`/api/v1/products/reviews?rid=${rid}&pid=${pid}`);
+      toast.success("Review deleted succcessfully.", {
+        position: "top-right",
+      });
+      return rid;
+    } catch (error) {
+      toast.error(error.response.data.message, {
+        position: "top-right",
+      });
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);

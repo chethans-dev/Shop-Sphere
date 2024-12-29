@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { editProduct } from "../../store/actions/adminActions";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchProductDetails } from "../../store/actions/productActions";
+import MetaData from "../layout/MetaData";
 
 const EditProduct = () => {
   const { id } = useParams();
@@ -51,6 +52,7 @@ const EditProduct = () => {
 
   return (
     <div className="rounded-md bg-white text-black flex flex-col gap-6 justify-center my-[2vmax] w-[90vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
+      <MetaData title="Edit Product - Admin" />
       <h1 className="text-2xl font-bold">Edit Product</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">

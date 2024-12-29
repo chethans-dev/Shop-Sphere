@@ -3,11 +3,16 @@ import {
   createProduct,
   deleteOrder,
   deleteProduct,
+  deleteReview,
+  deleteUser,
   editProduct,
   fetchAllProducts,
   fetchAllUsers,
   getAllOrders,
+  getAllReviews,
+  getAllUsers,
   updateOrder,
+  updateUserRole,
 } from "../actions/adminActions";
 
 const initialState = {
@@ -17,7 +22,6 @@ const initialState = {
   reviews: [],
   orders: [],
   order: {},
-  dashboardStats: {},
   loading: false,
   error: null,
   success: false,
@@ -149,6 +153,81 @@ const adminDashboardSlice = createSlice({
         state.orders = state.orders.filter((order) => order._id !== id);
       })
       .addCase(deleteOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle get all users
+    builder
+      .addCase(getAllUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.data;
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle Update user role
+    builder
+      .addCase(updateUserRole.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUserRole.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedUser = action.payload.data;
+        state.users = state.users.map((user) =>
+          user._id === updatedUser._id ? updatedUser : user
+        );
+      })
+      .addCase(updateUserRole.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle deleteUser
+    builder
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.loading = false;
+        const id = action.payload;
+        state.users = state.users.filter((user) => user._id !== id);
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle get all reviews
+    builder
+      .addCase(getAllReviews.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllReviews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reviews = action.payload.data.reviews;
+      })
+      .addCase(getAllReviews.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // Handle deleteReview
+    builder
+      .addCase(deleteReview.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteReview.fulfilled, (state, action) => {
+        state.loading = false;
+        const id = action.payload;
+        state.reviews = state.reviews.filter((review) => review._id !== id);
+      })
+      .addCase(deleteReview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

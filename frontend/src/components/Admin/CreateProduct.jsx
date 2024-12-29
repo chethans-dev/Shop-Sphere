@@ -10,6 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { createProduct } from "../../store/actions/adminActions";
 import { useNavigate } from "react-router-dom";
+import MetaData from "../layout/MetaData";
 
 const CreateProduct = () => {
   const { loading } = useSelector((state) => state.admin);
@@ -66,6 +67,7 @@ const CreateProduct = () => {
 
   return (
     <div className="rounded-md bg-white text-black flex flex-col gap-6 justify-center my-[2vmax] w-[50vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
+      <MetaData title="Create Product - Admin" />
       <h1 className="text-2xl font-bold">New Product</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">

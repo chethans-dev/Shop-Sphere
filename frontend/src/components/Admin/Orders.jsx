@@ -20,6 +20,7 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+import MetaData from "../layout/MetaData";
 
 const Orders = () => {
   const { orders } = useSelector((state) => state.admin);
@@ -75,6 +76,7 @@ const Orders = () => {
   }, [dispatch]);
   return (
     <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-auto max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
+      <MetaData title="Orders - Admin" />
       <Typography variant="h4" component="h1" fontWeight="bold" mb={6}>
         Manage Orders
       </Typography>
@@ -114,7 +116,6 @@ const Orders = () => {
                     <Button
                       variant="outlined"
                       color="black"
-                      className="w-full text-sm py-2 px-4"
                       onClick={() => handleEditDialogOpen(order)}
                     >
                       Edit
@@ -123,7 +124,6 @@ const Orders = () => {
                     <Button
                       variant="filled"
                       color="black"
-                      className="w-full text-sm py-2 px-4"
                       onClick={() => handleDeleteDialogOpen(order._id)}
                     >
                       Delete

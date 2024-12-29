@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Button, Typography } from "@material-tailwind/react";
+import MetaData from "../layout/MetaData";
 
 const AllProducts = () => {
   const dispatch = useDispatch();
@@ -49,7 +50,8 @@ const AllProducts = () => {
   };
 
   return (
-    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-[50vw] max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
+    <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-auto max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
+      <MetaData title="Products - Admin" />
       <Typography variant="h4" component="h1" fontWeight="bold" mb={6}>
         Manage Products
       </Typography>
@@ -75,17 +77,11 @@ const AllProducts = () => {
                 <TableCell>
                   <div className="flex flex-row gap-2">
                     <Link to={`/admin/edit/${product._id}`}>
-                      <Button
-                        variant="outlined"
-                        className="w-full text-sm py-2 px-4"
-                      >
-                        Edit
-                      </Button>
+                      <Button variant="outlined">Edit</Button>
                     </Link>
                     <Button
                       variant="filled"
                       color="black"
-                      className="w-full text-sm py-2 px-4"
                       onClick={() => handleDeleteDialogOpen(product._id)}
                     >
                       Delete
@@ -105,10 +101,7 @@ const AllProducts = () => {
           Are you sure you want to delete this product?
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={handleDeleteDialogClose}
-            variant="outlined"
-          >
+          <Button onClick={handleDeleteDialogClose} variant="outlined">
             Cancel
           </Button>
 

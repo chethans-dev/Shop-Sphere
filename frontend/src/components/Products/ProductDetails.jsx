@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import ReactStars from "react-rating-stars-component";
-import { createReview, fetchProductDetails } from "../../store/actions/productActions";
+import {
+  createReview,
+  fetchProductDetails,
+} from "../../store/actions/productActions";
 import DetailsLoader from "../Loader/DetailsLoader";
 import Testimonials from "./Testimonials";
 import { clearErrors } from "../../store/reducers/productSlice";
@@ -74,7 +77,7 @@ const ProductDetails = () => {
       rating: reviewRating,
       comment: reviewText,
     };
-    
+
     await dispatch(createReview(payload));
     await dispatch(fetchProductDetails(id));
     setShowModal(false);

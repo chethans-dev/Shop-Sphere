@@ -85,10 +85,10 @@ const router = createBrowserRouter([
               { path: "dashboard", element: <Dashboard /> },
               { path: "products", element: <AllProducts /> },
               { path: "product", element: <CreateProduct /> },
+              { path: "edit/:id", element: <EditProduct /> },
               { path: "orders", element: <Orders /> },
               { path: "users", element: <Users /> },
               { path: "reviews", element: <Reviews /> },
-              { path: "edit/:id", element: <EditProduct /> },
             ],
           },
         ],
@@ -111,6 +111,8 @@ function App() {
     dispatch(clearErrors());
     getKey();
   }, [dispatch]);
+
+  window.addEventListener("contextmenu", (e) => e.preventDefault());
 
   return (
     <>
