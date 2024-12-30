@@ -78,7 +78,7 @@ const Users = () => {
     <div className="rounded-md bg-white flex flex-col gap-6 justify-center my-[2vmax] w-auto max-w-5xl shadow-lg p-10 custom-scrollbar overflow-y-auto">
       <MetaData title="Users - Admin" />
       <Typography variant="h4" component="h1" fontWeight="bold" mb={6}>
-        Manage Orders
+        Manage Users
       </Typography>
 
       <TableContainer>

@@ -118,7 +118,7 @@ const adminDashboardSlice = createSlice({
       })
       .addCase(getAllOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload.data;
+        state.orders = action.payload.data.orders;
       })
       .addCase(getAllOrders.rejected, (state, action) => {
         state.loading = false;

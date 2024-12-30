@@ -96,7 +96,7 @@ export const getAllOrders = createAsyncThunk(
   "product/getAllOrders",
   async (data, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get("/api/v1/orders");
+      const { data } = await axios.get("/api/v1/orders/all");
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
